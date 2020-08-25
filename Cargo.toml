@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 jsonrpc = "0.11.0"
+os_info = "2.0"
+dirs = "3.0"

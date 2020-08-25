@@ -15,3 +15,8 @@ A continuation of komodorpc-rust-client, heavily inspired by
 doesn't specifically say it's a Vec<u8>. How does this work? 
 Is it because `FromHex` is `Sized` it could be anything, 
 as long as it is `Sized`? 
+
+### TODO
+- Localize coin installations
+- Error types
+- 

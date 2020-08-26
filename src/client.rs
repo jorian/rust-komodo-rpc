@@ -9,22 +9,12 @@ use os_info::Type as OSType;
 
 pub type Result<T> = result::Result<T, Error>;
 
-
-// #[derive(Clone, Debug)]
-// pub enum Auth {
-//     UserPass(String, String),
-//     ConfigFile,
-// }
-//
-// impl Auth {
-//     fn get(self, coin: &str) -> Result<(String, String)> {
-//
-//
-//
-//
-//         Err(Error::IOError)
-//     }
-// }
+/// Let the system find a local installation, or supply your own connection details.
+#[derive(Clone, Debug)]
+pub enum Auth {
+    UserPass(String, String, String),
+    ConfigFile,
+}
 
 #[derive(Debug)]
 pub struct ConfigFile {
@@ -102,28 +92,48 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(coin: &str) -> Result<Self> {
-        let config = ConfigFile::new(coin)?;
-        Ok(Client {
-            client: jsonrpc::client::Client::new(
-                format!("http://127.0.0.1:{}", config.rpcport),
-                Some(config.rpcuser),
-                Some(config.rpcpassword)
-            )
-        })
+    pub fn new(coin: &str, auth: Auth) -> Result<Self> {
+        match auth {
+            Auth::ConfigFile => {
+                let config = ConfigFile::new(coin)?;
+                Ok(Client {
+                    client: jsonrpc::client::Client::new(
+                        format!("http://127.0.0.1:{}", config.rpcport),
+                        Some(config.rpcuser),
+                        Some(config.rpcpassword)
+                    )
+                })
+            },
+            Auth::UserPass(url, rpcuser, rpcpassword) => {
+                Ok(Client {
+                    client: jsonrpc::client::Client::new(
+                        url,
+                        Some(rpcuser),
+                        Some(rpcpassword)
+                    )
+                })
+            }
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::client::{ConfigFile, Client};
+    use crate::client::{ConfigFile, Client, Auth};
 
     #[test]
     fn get_config() {
         let config_file = ConfigFile::new("KMD").unwrap();
         println!("{:#?}", &config_file);
 
-        let client = Client::new("KMD");
+        let client = Client::new("KMD", Auth::ConfigFile);
+        assert!(client.is_ok());
+
+        let client = Client::new("KMD", Auth::UserPass(
+            "http://127.0.0.1:7771".to_string(),
+            "123kjh12jkl3h1kl23jh".to_string(),
+            "213kj4h2kl3j4h23kl4jh".to_string()
+        ));
         assert!(client.is_ok());
 
         let config_file = ConfigFile::new("ILN");

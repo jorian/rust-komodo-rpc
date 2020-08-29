@@ -17,6 +17,6 @@ Is it because `FromHex` is `Sized` it could be anything,
 as long as it is `Sized`? 
 
 ### TODO
-- Localize coin installations
-- Error types
-- 
+- [ ] Localize coin installations
+- [ ] Error types
+- [ ] create space for json return value deserialization into Types

@@ -117,6 +117,26 @@ impl Client {
     }
 }
 
+impl RpcApi for Client {
+    fn call<T: for<'a> serde::de::Deserialize<'a>>(
+        &self,
+        cmd: &str,
+        args: &[serde_json::Value]
+    ) -> Result<T> {
+        let req = self.client.build_request(&cmd, &args);
+        let resp = self.client.send_request(&req).map_err(Error::from);
+
+        Ok(resp?.into_result()?)
+    }
+}
+
+pub trait RpcApi: Sized {
+    fn call<T: for<'a> serde::de::Deserialize<'a>>(
+        &self, cmd: &str,
+        args: &[serde_json::Value],
+    ) -> Result<T>;
+}
+
 #[cfg(test)]
 mod tests {
     use crate::client::{ConfigFile, Client, Auth};

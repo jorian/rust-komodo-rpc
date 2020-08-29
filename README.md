@@ -20,3 +20,4 @@ as long as it is `Sized`?
 - [ ] Localize coin installations
 - [ ] Error types
 - [ ] create space for json return value deserialization into Types
+- [ ] Logging

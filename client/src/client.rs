@@ -5,7 +5,11 @@ use std::path::PathBuf;
 use std::collections::HashMap;
 use std::io::ErrorKind;
 
+
+
 use os_info::Type as OSType;
+
+use crate::bitcoin;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -130,11 +134,22 @@ impl RpcApi for Client {
     }
 }
 
+// This trait is to be implemented by an implementation of a client, and only the `call` method
+// is to be implemented.
+// All the other methods are methods that a client can call, which in turn do RPCs to the coin daemon.
+// the `for` keyword used in serde is done to let the serde deserializer determine the lifetime of
+// anything that is put out, in contrast with letting the function caller determine the lifetime.
+// (Higher-Ranked Trait Bounds)
 pub trait RpcApi: Sized {
     fn call<T: for<'a> serde::de::Deserialize<'a>>(
         &self, cmd: &str,
         args: &[serde_json::Value],
     ) -> Result<T>;
+
+    /// Get block hash at a given height
+    fn get_block_hash(&self, height: u64) -> Result<bitcoin::BlockHash> {
+        self.call("getblockhash", &[height.into()])
+    }
 }
 
 #[cfg(test)]

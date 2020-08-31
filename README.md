@@ -7,6 +7,7 @@ A continuation of komodorpc-rust-client, heavily inspired by
   - workspaces
 - Simplify codebase
 - Do more than just be a RPC lib
+- Focus on CC support to understand CC
 
 ### Questions
 - Why is there a Queryable trait?
@@ -17,7 +18,9 @@ Is it because `FromHex` is `Sized` it could be anything,
 as long as it is `Sized`? 
 
 ### TODO
-- [ ] Localize coin installations
+- [x] Localize coin installations
 - [ ] Error types
-- [ ] create space for json return value deserialization into Types
+  - look into [snafu](https://docs.rs/snafu/0.1.4/snafu/)
+- [x] create space for json return value deserialization into Types
 - [ ] Logging
+- [ ] komodo crate with komodo tools

@@ -9,7 +9,7 @@ use std::io::ErrorKind;
 
 use os_info::Type as OSType;
 
-use crate::bitcoin;
+use crate::{bitcoin, json};
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -74,12 +74,12 @@ impl ConfigFile {
             ))
             .collect::<HashMap<String, String>>();
 
-        let _rpc_user = map.get("rpcuser").ok_or(Error::IOError(io::Error::from(ErrorKind::NotFound)))?;
-        let _rpc_password = map.get("rpcpassword").ok_or(Error::IOError(io::Error::from(ErrorKind::NotFound)))?;
+        let _rpc_user = map.get("rpcuser").ok_or(Error::InvalidConfigFile)?;
+        let _rpc_password = map.get("rpcpassword").ok_or(Error::InvalidConfigFile)?;
         let _rpc_port =
             match coin {
                 "KMD" => "7771", // KMD doesn't put rpcport in conf file at install
-                _ => map.get("rpcport").ok_or(Error::IOError(io::Error::from(ErrorKind::NotFound)))?,
+                _ => map.get("rpcport").ok_or(Error::InvalidConfigFile)?,
             };
 
         Ok(ConfigFile {
@@ -87,7 +87,6 @@ impl ConfigFile {
             rpcpassword:   _rpc_password.to_owned(),
             rpcport:       _rpc_port.parse::<u16>()?
         })
-
     }
 }
 
@@ -149,6 +148,10 @@ pub trait RpcApi: Sized {
     /// Get block hash at a given height
     fn get_block_hash(&self, height: u64) -> Result<bitcoin::BlockHash> {
         self.call("getblockhash", &[height.into()])
+    }
+
+    fn get_coin_supply(&self, height: &str) -> Result<json::CoinSupply> {
+        self.call("coinsupply", &[height.into()])
     }
 }
 

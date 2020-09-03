@@ -10,6 +10,7 @@ use std::io::ErrorKind;
 use os_info::Type as OSType;
 
 use crate::{bitcoin, json};
+use komodo_rpc_json::bitcoin::hashes::hex::FromHex;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -152,6 +153,22 @@ pub trait RpcApi: Sized {
 
     fn get_coin_supply(&self, height: &str) -> Result<json::CoinSupply> {
         self.call("coinsupply", &[height.into()])
+    }
+
+    /// Get a block, based on its hash (later on: and height todo).
+    fn get_block(&self, hash: &bitcoin::BlockHash) -> Result<json::Block> {
+        let val = serde_json::to_value(hash)?;
+
+        Ok(self.call("getblock", &[val])?)
+        // let hex: String = self.call("getblock", &[val])?;
+        // let bytes: Vec<u8> = FromHex::from_hex(&hex)?;
+        // let deserialized = bitcoin::consensus::encode::deserialize(&bytes)?;
+        //
+        // Ok(deserialized)
+        // fetch the hex
+        // make it a Vec<u8>
+        // that data needs to be consensus deserialized, to make sure it is a valid hash.
+        // into_json()
     }
 }
 

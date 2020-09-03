@@ -35,3 +35,39 @@ pub struct CoinSupply {
     #[serde(rename = "blocksperyear")]
     pub blocks_per_year: Option<u32>,
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Block {
+    pub last_notarized_height: u32,
+    pub hash: bitcoin::BlockHash,
+    pub confirmations: u32,
+    pub rawconfirmations: u32,
+    pub size: u32,
+    pub height: u32,
+    pub version: u16,
+    pub merkleroot: bitcoin::TxMerkleNode,
+    pub segid: i32,
+    pub finalsaplingroot: String,
+    pub tx: Vec<bitcoin::hash_types::Txid>,
+    pub time: u64,
+    pub nonce: String,
+    pub solution: String,
+    pub bits: String,
+    pub difficulty: f64,
+    pub chainwork: String,
+    pub anchor: String,
+    pub blocktype: String,
+    pub valuePools: Vec<ValuePool>,
+    pub previousblockhash: Option<bitcoin::BlockHash>,
+    pub nextblockhash: Option<bitcoin::BlockHash>
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ValuePool {
+    pub id: String,
+    pub monitored: bool,
+    pub chainValue: f64,
+    pub chainValueZat: u64,
+    pub valueDelta: f64,
+    pub valueDeltaZat: u64
+}

@@ -7,7 +7,8 @@ pub enum Error {
     JsonRPC(jsonrpc::Error),
     IOError(io::Error),
     ParseIntError(ParseIntError),
-    InvalidConfigFile
+    InvalidConfigFile,
+    Json(serde_json::error::Error),
 }
 
 impl error::Error for Error {
@@ -17,6 +18,7 @@ impl error::Error for Error {
             Error::JsonRPC(ref e) => Some(e),
             Error::IOError(ref e) => Some(e),
             Error::InvalidConfigFile => None,
+            Error::Json(ref e) => Some(e)
         }
     }
 }
@@ -27,7 +29,8 @@ impl fmt::Display for Error {
             Error::ParseIntError(ref e) => write!(f, "Parse error: {}", e),
             Error::JsonRPC(ref e) => write!(f, "RPC error: {}", e),
             Error::IOError(ref e) => write!(f, "IO error: {}", e),
-            Error::InvalidConfigFile => write!(f, "Error in config file")
+            Error::InvalidConfigFile => write!(f, "Error in config file"),
+            Error::Json(ref e) => write!(f, "JSON error: {}", e)
         }
     }
 }
@@ -50,4 +53,7 @@ impl From<ParseIntError> for Error {
     }
 }
 
+impl From<serde_json::error::Error> for Error {
+    fn from(e: serde_json::error::Error) -> Error { Error::Json(e) }
+}
 

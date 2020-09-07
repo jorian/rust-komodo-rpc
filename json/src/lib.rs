@@ -71,3 +71,18 @@ pub struct ValuePool {
     pub valueDelta: f64,
     pub valueDeltaZat: u64
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct WalletInfo {
+    pub walletversion: u32,
+    pub balance: f64,
+    pub unconfirmed_balance: f64,
+    pub immature_balance: f64,
+    pub txcount: u32,
+    pub keypoololdest: u64,
+    pub keypoolsize: u32,
+    pub unlocked_until: u32,
+    pub paytxfee: f64,
+    // Todo what is this?
+    pub seedfp: String
+}

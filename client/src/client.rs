@@ -160,6 +160,8 @@ pub trait RpcApi: Sized {
         let val = serde_json::to_value(hash)?;
 
         Ok(self.call("getblock", &[val])?)
+        // the BTC rpc library explicitly validates the bytes that are returned from the daemon.
+
         // let hex: String = self.call("getblock", &[val])?;
         // let bytes: Vec<u8> = FromHex::from_hex(&hex)?;
         // let deserialized = bitcoin::consensus::encode::deserialize(&bytes)?;
@@ -173,6 +175,14 @@ pub trait RpcApi: Sized {
 
     fn ping(&self) -> Result<()> {
         self.call("ping", &[])
+    }
+
+    fn get_unconfirmed_balance(&self) -> Result<f64> {
+        self.call("getunconfirmedbalance", &[])
+    }
+
+    fn get_wallet_info(&self) -> Result<json::WalletInfo> {
+        self.call("getwalletinfo", &[])
     }
 }
 

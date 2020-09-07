@@ -41,48 +41,67 @@ pub struct Block {
     pub last_notarized_height: u32,
     pub hash: bitcoin::BlockHash,
     pub confirmations: u32,
-    pub rawconfirmations: u32,
+    #[serde(rename = "rawconfirmations")]
+    pub raw_confirmations: u32,
     pub size: u32,
     pub height: u32,
     pub version: u16,
-    pub merkleroot: bitcoin::TxMerkleNode,
-    pub segid: i32,
-    pub finalsaplingroot: String,
+    #[serde(rename = "merkleroot")]
+    pub merkle_root: bitcoin::TxMerkleNode,
+    #[serde(rename = "segid")]
+    pub seg_id: i32,
+    #[serde(rename = "finalsaplingroot")]
+    pub final_sapling_root: String,
     pub tx: Vec<bitcoin::hash_types::Txid>,
     pub time: u64,
     pub nonce: String,
     pub solution: String,
     pub bits: String,
     pub difficulty: f64,
-    pub chainwork: String,
+    #[serde(rename = "chainwork")]
+    pub chain_work: String,
     pub anchor: String,
-    pub blocktype: String,
-    pub valuePools: Vec<ValuePool>,
-    pub previousblockhash: Option<bitcoin::BlockHash>,
-    pub nextblockhash: Option<bitcoin::BlockHash>
+    #[serde(rename = "blocktype")]
+    pub block_type: String,
+    #[serde(rename = "valuePools")]
+    pub value_pools: Vec<ValuePool>,
+    #[serde(rename = "previousblockhash")]
+    pub previous_blockhash: Option<bitcoin::BlockHash>,
+    #[serde(rename = "nextblockhash")]
+    pub next_blockhash: Option<bitcoin::BlockHash>
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValuePool {
     pub id: String,
     pub monitored: bool,
-    pub chainValue: f64,
-    pub chainValueZat: u64,
-    pub valueDelta: f64,
-    pub valueDeltaZat: u64
+    #[serde(rename = "chainValue")]
+    pub chain_value: f64,
+    #[serde(rename = "chainValueZat")]
+    pub chain_value_sat: u64,
+    #[serde(rename = "valueDelta")]
+    pub value_delta: f64,
+    #[serde(rename = "valueDeltaZat")]
+    pub value_delta_sat: u64
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct WalletInfo {
-    pub walletversion: u32,
+    #[serde(rename = "walletversion")]
+    pub wallet_version: u32,
     pub balance: f64,
     pub unconfirmed_balance: f64,
     pub immature_balance: f64,
-    pub txcount: u32,
-    pub keypoololdest: u64,
-    pub keypoolsize: u32,
+    #[serde(rename = "txcount")]
+    pub tx_count: u32,
+    #[serde(rename = "keypoololdest")]
+    pub keypool_oldest: u64,
+    #[serde(rename = "keypoolsize")]
+    pub keypool_size: u32,
     pub unlocked_until: u32,
-    pub paytxfee: f64,
+    #[serde(rename = "paytxfee")]
+    pub pay_tx_fee: f64,
     // Todo what is this?
-    pub seedfp: String
+    #[serde(rename = "seedfp")]
+    pub seed_fp: String
 }

@@ -5,8 +5,6 @@ use std::path::PathBuf;
 use std::collections::HashMap;
 use std::io::ErrorKind;
 
-
-
 use os_info::Type as OSType;
 
 use crate::{bitcoin, json};
@@ -130,6 +128,8 @@ impl RpcApi for Client {
         let req = self.client.build_request(&cmd, &args);
         let resp = self.client.send_request(&req).map_err(Error::from);
 
+        dbg!(&resp);
+
         Ok(resp?.into_result()?)
     }
 }
@@ -169,6 +169,10 @@ pub trait RpcApi: Sized {
         // make it a Vec<u8>
         // that data needs to be consensus deserialized, to make sure it is a valid hash.
         // into_json()
+    }
+
+    fn ping(&self) -> Result<()> {
+        self.call("ping", &[])
     }
 }
 

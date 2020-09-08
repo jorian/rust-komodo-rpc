@@ -9,6 +9,7 @@ pub enum Error {
     ParseIntError(ParseIntError),
     InvalidConfigFile,
     Json(serde_json::error::Error),
+    KMDError(String),
 }
 
 impl error::Error for Error {
@@ -18,7 +19,8 @@ impl error::Error for Error {
             Error::JsonRPC(ref e) => Some(e),
             Error::IOError(ref e) => Some(e),
             Error::InvalidConfigFile => None,
-            Error::Json(ref e) => Some(e)
+            Error::Json(ref e) => Some(e),
+            Error::KMDError(ref e) => None,
         }
     }
 }
@@ -30,7 +32,8 @@ impl fmt::Display for Error {
             Error::JsonRPC(ref e) => write!(f, "RPC error: {}", e),
             Error::IOError(ref e) => write!(f, "IO error: {}", e),
             Error::InvalidConfigFile => write!(f, "Error in config file"),
-            Error::Json(ref e) => write!(f, "JSON error: {}", e)
+            Error::Json(ref e) => write!(f, "JSON error: {}", e),
+            Error::KMDError(ref e) => write!(f, "KMD daemon error: {}", e),
         }
     }
 }

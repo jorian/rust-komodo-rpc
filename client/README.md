@@ -18,7 +18,7 @@
 - [ ]   getreceivedbyaddress "KMD_address" ( minconf )
 - [ ]   gettransaction "txid" ( includeWatchonly )
 - [x]   getunconfirmedbalance
-- [ ]   getwalletinfo
+- [x]   getwalletinfo
 - [ ]   importaddress "address" ( "label" rescan )
 - [ ]   importprivkey "komodoprivkey" ( "label" rescan height secret_key)
 - [ ]   importwallet "filename"

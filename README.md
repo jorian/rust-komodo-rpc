@@ -24,3 +24,4 @@ as long as it is `Sized`?
 - [x] create space for json return value deserialization into Types
 - [ ] Logging
 - [ ] komodo crate with komodo tools
+- [ ] start adding more structure in json workspace

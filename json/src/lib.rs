@@ -8,6 +8,20 @@ pub extern crate bitcoin;
 extern crate serde;
 extern crate serde_json;
 
+pub enum PubkeyOrAddress<'a> {
+    Address(&'a str),
+    Pubkey(&'a str)
+}
+
+impl<'a> serde::Serialize for PubkeyOrAddress<'a> {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match *self {
+            PubkeyOrAddress::Address(a) => serde::Serialize::serialize(a, serializer),
+            PubkeyOrAddress::Pubkey(p) => serde::Serialize::serialize(p, serializer),
+        }
+    }
+}
+
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct CoinSupply {

@@ -185,7 +185,7 @@ pub trait RpcApi: Sized {
 
     // Label is deprecated and thus not used in the method call.
     // Todo keys are either an address or a pubkey.
-    fn add_multi_sig_address(&self, n_required: u8, keys: &[bitcoin::hashes::sha256d::Hash]) -> Result<String> {
+    fn add_multi_sig_address(&self, n_required: u8, keys: &[json::PubkeyOrAddress]) -> Result<String> {
         // maximum of 15 in a msig.
         if n_required > 15 {
             return Err(Error::KMDError(String::from("No more than 15 signers in a msig allowed")))
@@ -201,6 +201,8 @@ pub trait RpcApi: Sized {
     fn get_wallet_info(&self) -> Result<json::WalletInfo> {
         self.call("getwalletinfo", &[])
     }
+
+    fn get_new_address(&self) -> Result<json::Address> { self.call("getnewaddress", &[])}
 }
 
 #[cfg(test)]

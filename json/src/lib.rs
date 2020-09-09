@@ -22,6 +22,8 @@ impl<'a> serde::Serialize for PubkeyOrAddress<'a> {
     }
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Address(String);
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct CoinSupply {

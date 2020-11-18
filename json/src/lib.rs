@@ -11,8 +11,9 @@ extern crate serde_json;
 use serde::{Deserializer, Deserialize, Serialize, Serializer};
 use serde::de::Error;
 
+#[derive(Clone, Debug)]
 pub enum PubkeyOrAddress<'a> {
-    Address(&'a str),
+    Address(&'a Address),
     Pubkey(&'a str)
 }
 
@@ -31,6 +32,7 @@ pub struct Address {
     // todo: verify payload
     // - whether address is valid
     // - compressed / uncompressed
+    // - P2SH / P2PKH
     payload: String
 }
 

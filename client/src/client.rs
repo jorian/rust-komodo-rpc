@@ -83,7 +83,13 @@ impl ConfigFile {
         let _rpc_password = map.get("rpcpassword").ok_or(Error::InvalidConfigFile)?;
         let _rpc_port =
             match coin {
-                "KMD" => "7771", // KMD doesn't put rpcport in conf file at install
+                // KMD doesn't put rpcport in conf file at install, but users could have modified it afterwards.
+                "KMD" => {
+                    match map.get("rpcport") {
+                        Some(port) => port,
+                        None => "7771"
+                    }
+                }
                 _ => map.get("rpcport").ok_or(Error::InvalidConfigFile)?,
             };
 
@@ -208,6 +214,8 @@ pub trait RpcApi: Sized {
 #[cfg(test)]
 mod tests {
     use crate::client::{ConfigFile, Client, Auth};
+
+    // todo https://github.com/iredelmeier/filesystem-rs/blob/master/src/lib.rs
 
     #[test]
     fn get_config() {

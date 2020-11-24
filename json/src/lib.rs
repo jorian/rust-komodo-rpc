@@ -9,7 +9,6 @@ extern crate serde;
 extern crate serde_json;
 
 use serde::{Deserializer, Deserialize, Serialize, Serializer};
-use serde::de::Error;
 
 #[derive(Clone, Debug)]
 pub enum PubkeyOrAddress<'a> {
@@ -156,7 +155,7 @@ pub struct WalletInfo {
     pub keypool_oldest: u64,
     #[serde(rename = "keypoolsize")]
     pub keypool_size: u32,
-    pub unlocked_until: u32,
+    pub unlocked_until: Option<u32>,
     #[serde(rename = "paytxfee")]
     pub pay_tx_fee: f64,
     // Todo what is this?

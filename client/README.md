@@ -2,7 +2,7 @@
 
 ### Wallet
 
-- [ ]   addmultisigaddress nrequired ["key",...] ( "account" )
+- [x]   addmultisigaddress nrequired ["key",...] ( "account" )
 - [ ]   backupwallet "destination"
 - [ ]   cleanwallettransactions "txid"
 - [ ]   convertpassphrase "agamapassphrase"
@@ -41,7 +41,7 @@
 - [ ]   setaccount "KMD_address" "account"
 - [ ]   setpubkey
 - [ ]   setstakingsplit
-- [ ]   settxfee amount
+- [x]   settxfee amount
 - [ ]   signmessage "t-addr" "message"
 - [ ]   walletlock
 - [ ]   walletpassphrase "passphrase" timeout

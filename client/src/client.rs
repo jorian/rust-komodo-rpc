@@ -209,6 +209,10 @@ pub trait RpcApi: Sized {
     }
 
     fn get_new_address(&self) -> Result<json::Address> { self.call("getnewaddress", &[])}
+
+    fn set_tx_fee(&self, amount: f64) -> Result<bool> {
+        self.call("settxfee", &[amount.into()])
+    }
 }
 
 #[cfg(test)]

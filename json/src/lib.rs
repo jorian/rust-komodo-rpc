@@ -166,9 +166,19 @@ pub struct WalletInfo {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct CleanedWalletTransactions {
     #[serde(rename = "total_transactons")]
-    total: u8,
+    pub total: u8,
     #[serde(rename = "remaining_transactons")]
-    remaining: u8,
+    pub remaining: u8,
     #[serde(rename = "removed_transactions")]
-    removed: u8
+    pub removed: u8
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ConvertedPassphrase {
+    #[serde(rename = "agamapassphrase")]
+    passphrase: String,
+    address: Address,
+    pubkey: String,
+    privkey: String,
+    wif: String
 }

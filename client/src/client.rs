@@ -1,7 +1,7 @@
 use jsonrpc;
 use std::{io, result, fs};
 use crate::error::Error;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 use std::collections::HashMap;
 use std::io::ErrorKind;
 
@@ -198,6 +198,10 @@ pub trait RpcApi: Sized {
         }
 
         self.call("addmultisigaddress", &[n_required.into(), into_json(keys)?])
+    }
+
+    fn backup_wallet(&self, destination: &str) -> Result<PathBuf> {
+        self.call("backupwallet", &[destination.into()]).map(|path: String| PathBuf::from(&path))
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

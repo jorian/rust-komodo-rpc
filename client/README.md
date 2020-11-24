@@ -4,7 +4,7 @@
 
 - [x]   addmultisigaddress nrequired ["key",...] ( "account" )
 - [x]   backupwallet "destination"
-- [ ]   cleanwallettransactions "txid"
+- [x]   cleanwallettransactions "txid"
 - [ ]   convertpassphrase "agamapassphrase"
 - [ ]   dumpprivkey "t-addr"
 - [ ]   dumpwallet "filename"

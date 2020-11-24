@@ -162,3 +162,13 @@ pub struct WalletInfo {
     #[serde(rename = "seedfp")]
     pub seed_fp: String
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct CleanedWalletTransactions {
+    #[serde(rename = "total_transactons")]
+    total: u8,
+    #[serde(rename = "remaining_transactons")]
+    remaining: u8,
+    #[serde(rename = "removed_transactions")]
+    removed: u8
+}

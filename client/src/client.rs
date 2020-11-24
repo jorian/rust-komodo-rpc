@@ -204,6 +204,8 @@ pub trait RpcApi: Sized {
         self.call("backupwallet", &[destination.into()]).map(|path: String| PathBuf::from(&path))
     }
 
+    fn clean_wallet_transactions(&self) -> Result<json::CleanedWalletTransactions> { self.call("cleanwallettransactions", &[]) }
+
     fn get_unconfirmed_balance(&self) -> Result<f64> {
         self.call("getunconfirmedbalance", &[])
     }

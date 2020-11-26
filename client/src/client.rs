@@ -206,8 +206,12 @@ pub trait RpcApi: Sized {
 
     fn clean_wallet_transactions(&self) -> Result<json::CleanedWalletTransactions> { self.call("cleanwallettransactions", &[]) }
 
-    fn convert_passphrase(&self, passphrase: &str) -> Result<ConvertedPassphrase> {
+    fn convert_passphrase(&self, passphrase: &str) -> Result<json::ConvertedPassphrase> {
         self.call("convertpassphrase", &[passphrase.into()])
+    }
+
+    fn import_privkey(&self, privkey: &str) {
+        unimplemented!()
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

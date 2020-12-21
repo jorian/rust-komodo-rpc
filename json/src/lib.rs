@@ -2,6 +2,7 @@
 #![crate_type = "rlib"]
 
 pub extern crate bitcoin;
+pub extern crate komodo;
 
 #[allow(unused)]
 #[macro_use] // `macro_use` is needed for v1.24.0 compilation.
@@ -9,6 +10,7 @@ extern crate serde;
 extern crate serde_json;
 
 use serde::{Deserializer, Deserialize, Serialize, Serializer};
+use komodo::{PublicKey, PrivateKey};
 
 #[derive(Clone, Debug)]
 pub enum PubkeyOrAddress<'a> {
@@ -178,7 +180,9 @@ pub struct ConvertedPassphrase {
     #[serde(rename = "agamapassphrase")]
     passphrase: String,
     address: Address,
-    pubkey: String,
-    privkey: String,
+    #[serde(rename = "pubkey")]
+    public_key: PublicKey,
+    #[serde(rename = "privkey")]
+    private_key: PrivateKey,
     wif: String
 }

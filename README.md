@@ -23,5 +23,6 @@ as long as it is `Sized`?
   - look into [snafu](https://docs.rs/snafu/0.1.4/snafu/)
 - [x] create space for json return value deserialization into Types
 - [ ] Logging
-- [ ] komodo crate with komodo tools
+- [x] komodo crate with komodo tools
 - [ ] start adding more structure in json workspace
+- [ ] deserialize from string into hex type

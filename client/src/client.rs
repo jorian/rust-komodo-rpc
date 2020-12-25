@@ -9,6 +9,7 @@ use os_info::Type as OSType;
 
 use crate::{bitcoin, json};
 use komodo_rpc_json::bitcoin::hashes::hex::FromHex;
+use komodo_rpc_json::GetTransactionResult;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -16,6 +17,80 @@ fn into_json<T>(val: T) -> Result<serde_json::Value>
     where T: serde::ser::Serialize,
 {
     Ok(serde_json::to_value(val)?)
+}
+
+/// Shorthand for converting an Option into an Option<serde_json::Value>.
+fn opt_into_json<T>(opt: Option<T>) -> Result<serde_json::Value>
+    where
+        T: serde::ser::Serialize,
+{
+    match opt {
+        Some(val) => Ok(into_json(val)?),
+        None => Ok(serde_json::Value::Null),
+    }
+}
+
+/// Shorthand for `serde_json::Value::Null`.
+fn null() -> serde_json::Value {
+    serde_json::Value::Null
+}
+
+/// Shorthand for an empty serde_json::Value array.
+fn empty_arr() -> serde_json::Value {
+    serde_json::Value::Array(vec![])
+}
+
+/// Shorthand for an empty serde_json object.
+fn empty_obj() -> serde_json::Value {
+    serde_json::Value::Object(Default::default())
+}
+
+/// Handle default values in the argument list
+///
+/// Substitute `Value::Null`s with corresponding values from `defaults` table,
+/// except when they are trailing, in which case just skip them altogether
+/// in returned list.
+///
+/// Note, that `defaults` corresponds to the last elements of `args`.
+///
+/// ```norust
+/// arg1 arg2 arg3 arg4
+///           def1 def2
+/// ```
+///
+/// Elements of `args` without corresponding `defaults` value, won't
+/// be substituted, because they are required.
+fn handle_defaults<'a, 'b>(
+    args: &'a mut [serde_json::Value],
+    defaults: &'b [serde_json::Value],
+) -> &'a [serde_json::Value] {
+    assert!(args.len() >= defaults.len());
+
+    // Pass over the optional arguments in backwards order, filling in defaults after the first
+    // non-null optional argument has been observed.
+    let mut first_non_null_optional_idx = None;
+    for i in 0..defaults.len() {
+        let args_i = args.len() - 1 - i;
+        let defaults_i = defaults.len() - 1 - i;
+        if args[args_i] == serde_json::Value::Null {
+            if first_non_null_optional_idx.is_some() {
+                if defaults[defaults_i] == serde_json::Value::Null {
+                    panic!("Missing `default` for argument idx {}", args_i);
+                }
+                args[args_i] = defaults[defaults_i].clone();
+            }
+        } else if first_non_null_optional_idx.is_none() {
+            first_non_null_optional_idx = Some(args_i);
+        }
+    }
+
+    let required_num = args.len() - defaults.len();
+
+    if let Some(i) = first_non_null_optional_idx {
+        &args[..i + 1]
+    } else {
+        &args[..required_num]
+    }
 }
 
 /// Let the system find a local installation, or supply your own connection details.
@@ -212,6 +287,11 @@ pub trait RpcApi: Sized {
 
     fn import_privkey(&self, privkey: &str) {
         unimplemented!()
+    }
+
+    fn get_transaction(&self, txid: &bitcoin::Txid, include_watch_only: Option<bool>) -> Result<GetTransactionResult> {
+        let mut args = [into_json(txid)?, opt_into_json(include_watch_only)?];
+        self.call("gettransaction", handle_defaults(&mut args, &[null()]))
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

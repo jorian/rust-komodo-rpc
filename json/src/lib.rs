@@ -11,6 +11,7 @@ extern crate serde_json;
 
 use serde::{Deserializer, Deserialize, Serialize, Serializer};
 use komodo::{PublicKey, PrivateKey};
+// use bitcoin::hash_types::*;
 
 #[derive(Clone, Debug)]
 pub enum PubkeyOrAddress<'a> {
@@ -184,5 +185,50 @@ pub struct ConvertedPassphrase {
     public_key: PublicKey,
     #[serde(rename = "privkey")]
     private_key: PrivateKey,
-    wif: String
+    wif: PrivateKey
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GetTransactionResult {
+    amount: f64,
+    fee: Option<f64>,
+    rawconfirmations: u32,
+    confirmations: u32,
+    blockhash: Option<bitcoin::BlockHash>,
+    blockindex: u32,
+    blocktime: Option<u64>,
+    expiryheight: u32,
+    txid: bitcoin::Txid,
+    walletconflicts: Vec<Option<bitcoin::Txid>>,
+    time: u64,
+    timereceived: u64,
+    vjoinsplit: Vec<Option<GetTransactionVJoinSplit>>,
+    hex: String
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GetTransactionVJoinSplit {
+    anchor: String, // Merkle root
+    nullifiers: Vec<Option<String>>,
+    commitments: Vec<Option<String>>,
+    macs: Vec<Option<String>>,
+    vpub_old: f64,
+    vpub_new: f64,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GetTransactionDetails {
+    account: String,
+    address: Address,
+    category: GetTransactionDetailsCategory,
+    amount: f64,
+    vout: u16,
+    fee: Option<f64>,
+    size: u32
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub enum GetTransactionDetailsCategory {
+    Send,
+    Receive
 }

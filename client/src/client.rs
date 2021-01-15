@@ -9,7 +9,9 @@ use os_info::Type as OSType;
 
 use crate::{bitcoin, json};
 use komodo_rpc_json::bitcoin::hashes::hex::FromHex;
-use komodo_rpc_json::GetTransactionResult;
+use komodo_rpc_json::{GetTransactionResult};
+use komodo_rpc_json::komodo::PrivateKey;
+use crate::json::komodo::util::address::AddressType;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -283,6 +285,14 @@ pub trait RpcApi: Sized {
 
     fn convert_passphrase(&self, passphrase: &str) -> Result<json::ConvertedPassphrase> {
         self.call("convertpassphrase", &[passphrase.into()])
+    }
+
+    fn dump_privkey(&self, address: json::Address) -> Result<PrivateKey> {
+        match address.addr_type {
+            AddressType::Shielded => return Err(Error::KMDError(String::from("no support for shielded addresses for this call"))),
+            _ => {}
+        }
+        self.call("dumpprivkey", &[address.to_string().into()])
     }
 
     fn import_privkey(&self, privkey: &str) {

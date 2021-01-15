@@ -6,7 +6,7 @@
 - [x]   backupwallet "destination"
 - [x]   cleanwallettransactions "txid"
 - [x]   convertpassphrase "agamapassphrase"
-- [ ]   dumpprivkey "t-addr"
+- [x]   dumpprivkey "t-addr"
 - [ ]   dumpwallet "filename"
 - [ ]   getaccount "KMD_address"
 - [ ]   getaccountaddress "account"

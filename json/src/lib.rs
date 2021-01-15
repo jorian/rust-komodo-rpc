@@ -11,6 +11,8 @@ extern crate serde_json;
 
 use serde::{Deserializer, Deserialize, Serialize, Serializer};
 use komodo::{PublicKey, PrivateKey};
+pub use komodo::Address;
+use bitcoin::{PubkeyHash, ScriptHash};
 // use bitcoin::hash_types::*;
 
 #[derive(Clone, Debug)]
@@ -25,47 +27,6 @@ impl<'a> serde::Serialize for PubkeyOrAddress<'a> {
             PubkeyOrAddress::Address(a) => serde::Serialize::serialize(a, serializer),
             PubkeyOrAddress::Pubkey(p) => serde::Serialize::serialize(p, serializer),
         }
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct Address {
-    addr_type: AddressType,
-    // todo: verify payload
-    // - whether address is valid
-    // - compressed / uncompressed
-    // - P2SH / P2PKH
-    payload: String
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub enum AddressType {
-    Transparent,
-    Shielded
-}
-
-impl<'de> serde::Deserialize<'de> for Address {
-    fn deserialize<D>(deserializer: D) -> Result<Self, <D as Deserializer<'de>>::Error> where
-        D: Deserializer<'de> {
-            let s: String = Deserialize::deserialize(deserializer)?;
-            match s.chars().nth(0).unwrap() {
-                'R' | 'b' => Ok(Address {
-                    addr_type: AddressType::Transparent,
-                    payload: String::from(s)
-                }),
-                'z' => Ok(Address {
-                    addr_type: AddressType::Shielded,
-                    payload: String::from(s)
-                }),
-                _ => panic!("invalid address"),
-            }
-    }
-}
-
-impl Serialize for Address {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where
-        S: Serializer {
-        serializer.serialize_str(&self.payload)
     }
 }
 

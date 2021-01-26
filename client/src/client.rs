@@ -295,6 +295,10 @@ pub trait RpcApi: Sized {
         self.call("dumpprivkey", &[address.to_string().into()])
     }
 
+    fn get_balance(&self, minconf: Option<usize>, include_watchonly: Option<bool>) -> Result<Amount> {
+
+    }
+
     fn import_privkey(&self, privkey: &str) {
         unimplemented!()
     }

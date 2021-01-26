@@ -1,5 +1,7 @@
 # Client implementations
 
+- Accounts are not supported in Komodo and will not be implemented here.
+
 ### Wallet
 
 - [x]   addmultisigaddress nrequired ["key",...] ( "account" )
@@ -11,7 +13,7 @@
 - [x]   ~~getaccount "KMD_address"~~
 - [x]   ~~getaccountaddress "account"~~
 - [x]   ~~getaddressesbyaccount "account"~~
-- [ ]   getbalance ( "account" minconf includeWatchonly )
+- [ ]   getbalance ( ~~"account"~~ minconf includeWatchonly )
 - [ ]   getnewaddress ~~( "account" )~~
 - [ ]   getrawchangeaddress
 - [x]   ~~getreceivedbyaccount "account" ( minconf )~~

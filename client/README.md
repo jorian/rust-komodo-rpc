@@ -8,13 +8,13 @@
 - [x]   convertpassphrase "agamapassphrase"
 - [x]   dumpprivkey "t-addr"
 - [ ]   dumpwallet "filename"
-- [ ]   getaccount "KMD_address"
-- [ ]   getaccountaddress "account"
-- [ ]   getaddressesbyaccount "account"
+- [x]   ~~getaccount "KMD_address"~~
+- [x]   ~~getaccountaddress "account"~~
+- [x]   ~~getaddressesbyaccount "account"~~
 - [ ]   getbalance ( "account" minconf includeWatchonly )
-- [ ]   getnewaddress ( "account" )
+- [ ]   getnewaddress ~~( "account" )~~
 - [ ]   getrawchangeaddress
-- [ ]   getreceivedbyaccount "account" ( minconf )
+- [x]   ~~getreceivedbyaccount "account" ( minconf )~~
 - [ ]   getreceivedbyaddress "KMD_address" ( minconf )
 - [ ]   gettransaction "txid" ( includeWatchonly )
 - [x]   getunconfirmedbalance
@@ -23,10 +23,10 @@
 - [ ]   importprivkey "komodoprivkey" ( "label" rescan height secret_key)
 - [ ]   importwallet "filename"
 - [ ]   keypoolrefill ( newsize )
-- [ ]   listaccounts ( minconf includeWatchonly)
+- [x]   ~~listaccounts ( minconf includeWatchonly)~~
 - [ ]   listaddressgroupings
 - [ ]   listlockunspent
-- [ ]   listreceivedbyaccount ( minconf includeempty includeWatchonly)
+- [x]   ~~listreceivedbyaccount ( minconf includeempty includeWatchonly)~~
 - [ ]   listreceivedbyaddress ( minconf includeempty includeWatchonly)
 - [ ]   listsinceblock ( "blockhash" target-confirmations includeWatchonly)
 - [ ]   listtransactions ( "account" count from includeWatchonly)
@@ -38,7 +38,7 @@
 - [ ]   sendfrom "fromaccount" "toKMDaddress" amount ( minconf "comment" "comment-to" )
 - [ ]   sendmany "fromaccount" {"address":amount,...} ( minconf "comment" ["address",...] )
 - [ ]   sendtoaddress "KMD_address" amount ( "comment" "comment-to" subtractfeefromamount )
-- [ ]   setaccount "KMD_address" "account"
+- [x]   ~~setaccount "KMD_address" "account"~~
 - [ ]   setpubkey
 - [ ]   setstakingsplit
 - [x]   settxfee amount

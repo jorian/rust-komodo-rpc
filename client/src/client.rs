@@ -12,6 +12,7 @@ use komodo_rpc_json::bitcoin::hashes::hex::FromHex;
 use komodo_rpc_json::{GetTransactionResult};
 use komodo_rpc_json::komodo::PrivateKey;
 use crate::json::komodo::util::address::AddressType;
+use crate::json::komodo::util::amount::Amount;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -296,7 +297,15 @@ pub trait RpcApi: Sized {
     }
 
     fn get_balance(&self, minconf: Option<usize>, include_watchonly: Option<bool>) -> Result<Amount> {
-
+        let mut args = ["*".into(), opt_into_json(minconf)?, opt_into_json(include_watchonly)?];
+        Ok(
+            Amount::from_kmd(
+                self.call(
+                    "getbalance",
+                    handle_defaults(&mut args, &[0.into(), null()])
+                )?
+            )?
+        )
     }
 
     fn import_privkey(&self, privkey: &str) {

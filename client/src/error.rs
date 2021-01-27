@@ -1,6 +1,8 @@
 use std::{io, error, fmt};
 use std::num::ParseIntError;
 use komodo_rpc_json::bitcoin::hashes::core::fmt::Formatter;
+use komodo_rpc_json::komodo;
+// use komodo_rpc_json::komodo::util::amount::ParseAmountError;
 
 #[derive(Debug)]
 pub enum Error {
@@ -10,6 +12,7 @@ pub enum Error {
     InvalidConfigFile,
     Json(serde_json::error::Error),
     KMDError(String),
+    InvalidAmount(komodo::util::amount::ParseAmountError),
 }
 
 impl error::Error for Error {
@@ -21,6 +24,7 @@ impl error::Error for Error {
             Error::InvalidConfigFile => None,
             Error::Json(ref e) => Some(e),
             Error::KMDError(ref e) => None,
+            Error::InvalidAmount(ref e) => Some(e)
         }
     }
 }
@@ -34,6 +38,7 @@ impl fmt::Display for Error {
             Error::InvalidConfigFile => write!(f, "Error in config file"),
             Error::Json(ref e) => write!(f, "JSON error: {}", e),
             Error::KMDError(ref e) => write!(f, "KMD daemon error: {}", e),
+            Error::InvalidAmount(ref e) => write!(f, "invalid amount: {}", e)
         }
     }
 }
@@ -58,5 +63,11 @@ impl From<ParseIntError> for Error {
 
 impl From<serde_json::error::Error> for Error {
     fn from(e: serde_json::error::Error) -> Error { Error::Json(e) }
+}
+
+impl From<komodo::util::amount::ParseAmountError> for Error {
+    fn from(e: komodo::util::amount::ParseAmountError) -> Error {
+        Error::InvalidAmount(e)
+    }
 }
 

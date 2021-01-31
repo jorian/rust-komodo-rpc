@@ -13,6 +13,7 @@ use komodo_rpc_json::{GetTransactionResult, Address};
 use komodo_rpc_json::komodo::PrivateKey;
 use crate::json::komodo::util::address::AddressType;
 use crate::json::komodo::util::amount::Amount;
+use komodo_rpc_json::komodo::util::amount::Denomination;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -312,13 +313,47 @@ pub trait RpcApi: Sized {
         self.call("getnewaddress", &[])
     }
 
-    fn import_privkey(&self, privkey: &str) {
-        unimplemented!()
+    fn get_raw_change_address(&self) -> Result<Address> {
+        self.call("getrawchangeaddress", &[])
+    }
+
+    fn get_received_by_address(&self, address: &Address, minconf: Option<usize>) -> Result<Amount> {
+        let mut args = [address.to_string().into(), opt_into_json(minconf)?];
+        Ok(
+            Amount::from_kmd(
+            self.call("getreceivedbyaddress", handle_defaults(&mut args, &[1.into()]))?
+            )?
+        )
     }
 
     fn get_transaction(&self, txid: &bitcoin::Txid, include_watch_only: Option<bool>) -> Result<GetTransactionResult> {
         let mut args = [into_json(txid)?, opt_into_json(include_watch_only)?];
         self.call("gettransaction", handle_defaults(&mut args, &[null()]))
+    }
+
+    fn import_address(
+        &self,
+        address: &Address,
+        label: Option<&str>,
+        rescan: Option<bool>,
+    ) -> Result<()> {
+        let mut args = [address.to_string().into(), opt_into_json(label)?, opt_into_json(rescan)?];
+        self.call("importaddress", handle_defaults(&mut args, &[into_json("")?, null()]))
+    }
+
+    fn import_private_key(
+        &self, 
+        privkey: &PrivateKey,
+        label: Option<&str>,
+        rescan: Option<bool>,
+    ) -> Result<Address> {
+        let mut args = [privkey.to_string().into(), opt_into_json(label)?, opt_into_json(rescan)?];
+        self.call("importprivkey", handle_defaults(&mut args, &[into_json("")?, null()]))
+    }
+
+    fn keypool_refill(&self, newsize: Option<usize>) -> Result<()> {
+        let mut args = [opt_into_json(newsize)?];
+        self.call("keypoolrefill", handle_defaults(&mut args, &[null()]))
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {
@@ -328,8 +363,6 @@ pub trait RpcApi: Sized {
     fn get_wallet_info(&self) -> Result<json::WalletInfo> {
         self.call("getwalletinfo", &[])
     }
-
-    fn get_new_address(&self) -> Result<json::Address> { self.call("getnewaddress", &[])}
 
     fn set_tx_fee(&self, amount: f64) -> Result<bool> {
         self.call("settxfee", &[amount.into()])

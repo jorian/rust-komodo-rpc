@@ -15,14 +15,14 @@
 - [x]   ~~getaddressesbyaccount "account"~~
 - [x]   getbalance ( ~~"account"~~ minconf includeWatchonly )
 - [x]   getnewaddress ~~( "account" )~~
-- [ ]   getrawchangeaddress
+- [x]   getrawchangeaddress
 - [x]   ~~getreceivedbyaccount "account" ( minconf )~~
-- [ ]   getreceivedbyaddress "KMD_address" ( minconf )
-- [ ]   gettransaction "txid" ( includeWatchonly )
+- [x]   getreceivedbyaddress "KMD_address" ( minconf )
+- [x]   gettransaction "txid" ( includeWatchonly )
 - [x]   getunconfirmedbalance
 - [x]   getwalletinfo
-- [ ]   importaddress "address" ( "label" rescan )
-- [ ]   importprivkey "komodoprivkey" ( "label" rescan height secret_key)
+- [x]   importaddress "address" ( "label" rescan )
+- [x]   importprivkey "komodoprivkey" ( "label" rescan height secret_key)
 - [ ]   importwallet "filename"
 - [ ]   keypoolrefill ( newsize )
 - [x]   ~~listaccounts ( minconf includeWatchonly)~~

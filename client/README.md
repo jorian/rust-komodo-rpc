@@ -14,7 +14,7 @@
 - [x]   ~~getaccountaddress "account"~~
 - [x]   ~~getaddressesbyaccount "account"~~
 - [x]   getbalance ( ~~"account"~~ minconf includeWatchonly )
-- [ ]   getnewaddress ~~( "account" )~~
+- [x]   getnewaddress ~~( "account" )~~
 - [ ]   getrawchangeaddress
 - [x]   ~~getreceivedbyaccount "account" ( minconf )~~
 - [ ]   getreceivedbyaddress "KMD_address" ( minconf )

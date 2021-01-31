@@ -9,7 +9,7 @@ use os_info::Type as OSType;
 
 use crate::{bitcoin, json};
 use komodo_rpc_json::bitcoin::hashes::hex::FromHex;
-use komodo_rpc_json::{GetTransactionResult};
+use komodo_rpc_json::{GetTransactionResult, Address};
 use komodo_rpc_json::komodo::PrivateKey;
 use crate::json::komodo::util::address::AddressType;
 use crate::json::komodo::util::amount::Amount;
@@ -306,6 +306,10 @@ pub trait RpcApi: Sized {
                 )?
             )?
         )
+    }
+
+    fn get_new_address(&self) -> Result<Address> {
+        self.call("getnewaddress", &[])
     }
 
     fn import_privkey(&self, privkey: &str) {

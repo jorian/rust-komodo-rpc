@@ -14,6 +14,7 @@ use komodo_rpc_json::komodo::PrivateKey;
 use crate::json::komodo::util::address::AddressType;
 use crate::json::komodo::util::amount::Amount;
 use komodo_rpc_json::komodo::util::amount::Denomination;
+use crate::json::ListLockUnspentResult;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -354,6 +355,10 @@ pub trait RpcApi: Sized {
     fn keypool_refill(&self, newsize: Option<usize>) -> Result<()> {
         let mut args = [opt_into_json(newsize)?];
         self.call("keypoolrefill", handle_defaults(&mut args, &[null()]))
+    }
+
+    fn list_lock_unspent(&self) -> Result<Vec<ListLockUnspentResult>> {
+        self.call("listlockunspent", &[])
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

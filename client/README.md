@@ -24,10 +24,10 @@
 - [x]   importaddress "address" ( "label" rescan )
 - [x]   importprivkey "komodoprivkey" ( "label" rescan height secret_key)
 - [ ]   importwallet "filename"
-- [ ]   keypoolrefill ( newsize )
+- [x]   keypoolrefill ( newsize )
 - [x]   ~~listaccounts ( minconf includeWatchonly)~~
-- [ ]   listaddressgroupings
-- [ ]   listlockunspent
+- [x]   ~~listaddressgroupings~~
+- [x]   listlockunspent
 - [x]   ~~listreceivedbyaccount ( minconf includeempty includeWatchonly)~~
 - [ ]   listreceivedbyaddress ( minconf includeempty includeWatchonly)
 - [ ]   listsinceblock ( "blockhash" target-confirmations includeWatchonly)

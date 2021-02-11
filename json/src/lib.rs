@@ -193,3 +193,9 @@ pub enum GetTransactionDetailsCategory {
     Send,
     Receive
 }
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ListLockUnspentResult {
+    pub txid: bitcoin::Txid,
+    pub vout: u16
+}

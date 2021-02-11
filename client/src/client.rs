@@ -14,7 +14,8 @@ use komodo_rpc_json::komodo::PrivateKey;
 use crate::json::komodo::util::address::AddressType;
 use crate::json::komodo::util::amount::Amount;
 use komodo_rpc_json::komodo::util::amount::Denomination;
-use crate::json::{ListLockUnspentResult, ListReceivedByAddressResult};
+use crate::json::*;//{ListLockUnspentResult, ListReceivedByAddressResult, ListSinceBlockResult};
+use crate::bitcoin::BlockHash;
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -373,6 +374,20 @@ pub trait RpcApi: Sized {
             opt_into_json(include_watch_only)?
         ];
         self.call("listreceivedbyaddress", handle_defaults(&mut args, &[1.into(), null(), null()]))
+    }
+
+    fn list_since_block(
+        &self,
+        blockhash: Option<&BlockHash>,
+        target_confirmations: Option<usize>,
+        include_watch_only: Option<bool>
+    ) -> Result<ListSinceBlockResult> {
+        let mut args = [
+            opt_into_json(blockhash)?,
+            opt_into_json(target_confirmations)?,
+            opt_into_json(include_watch_only)?
+        ];
+        self.call("listsinceblock", handle_defaults(&mut args, &[null(), 1.into(), null() ]))
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

@@ -12,8 +12,9 @@ extern crate serde_json;
 use serde::{Deserializer, Deserialize, Serialize, Serializer};
 use komodo::{PublicKey, PrivateKey};
 pub use komodo::Address;
-use bitcoin::{PubkeyHash, ScriptHash};
+use bitcoin::{PubkeyHash, ScriptHash, BlockHash, Txid};
 use komodo::util::amount::Amount;
+use crate::komodo::SignedAmount;
 // use bitcoin::hash_types::*;
 
 #[derive(Clone, Debug)]
@@ -210,4 +211,41 @@ pub struct ListReceivedByAddressResult {
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
     pub amount: Amount,
     pub confirmations: u32
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ListSinceBlockResult {
+    pub transactions: Vec<ListSinceBlockTransactions>,
+    pub lastblock: BlockHash
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ListSinceBlockTransactions {
+    account: String,
+    pub address: Option<Address>,
+    pub category: ListSinceBlockCategory,
+    #[serde(with = "komodo::util::amount::serde::as_kmd")]
+    pub amount: SignedAmount,
+    vout: u16,
+    #[serde(
+        with = "komodo::util::amount::serde::as_kmd::opt",
+        default,
+    )]
+    fee: Option<SignedAmount>,
+    confirmations: u32,
+    blockhash: BlockHash,
+    blockindex: u32,
+    blocktime: u64,
+    txid: Txid,
+    time: u64,
+    timereceived: u64,
+    comment: Option<String>,
+    to: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub enum ListSinceBlockCategory {
+    #[serde(rename = "send")]
+    Send,
+    #[serde(rename = "receive")]
+    Receive
 }

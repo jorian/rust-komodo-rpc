@@ -13,6 +13,7 @@ use serde::{Deserializer, Deserialize, Serialize, Serializer};
 use komodo::{PublicKey, PrivateKey};
 pub use komodo::Address;
 use bitcoin::{PubkeyHash, ScriptHash};
+use komodo::util::amount::Amount;
 // use bitcoin::hash_types::*;
 
 #[derive(Clone, Debug)]
@@ -198,4 +199,15 @@ pub enum GetTransactionDetailsCategory {
 pub struct ListLockUnspentResult {
     pub txid: bitcoin::Txid,
     pub vout: u16
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ListReceivedByAddressResult {
+    #[serde(rename = "involvesWatchonly")]
+    pub involves_watch_only: Option<bool>,
+    pub address: Address,
+    account: String,
+    #[serde(with = "komodo::util::amount::serde::as_kmd")]
+    pub amount: Amount,
+    pub confirmations: u32
 }

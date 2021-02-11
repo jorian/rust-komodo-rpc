@@ -29,7 +29,7 @@
 - [x]   ~~listaddressgroupings~~
 - [x]   listlockunspent
 - [x]   ~~listreceivedbyaccount ( minconf includeempty includeWatchonly)~~
-- [ ]   listreceivedbyaddress ( minconf includeempty includeWatchonly)
+- [x]   listreceivedbyaddress ( minconf includeempty includeWatchonly)
 - [ ]   listsinceblock ( "blockhash" target-confirmations includeWatchonly)
 - [ ]   listtransactions ( "account" count from includeWatchonly)
 - [ ]   listunspent ( minconf maxconf  ["address",...] )

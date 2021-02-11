@@ -14,7 +14,7 @@ use komodo_rpc_json::komodo::PrivateKey;
 use crate::json::komodo::util::address::AddressType;
 use crate::json::komodo::util::amount::Amount;
 use komodo_rpc_json::komodo::util::amount::Denomination;
-use crate::json::ListLockUnspentResult;
+use crate::json::{ListLockUnspentResult, ListReceivedByAddressResult};
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -359,6 +359,20 @@ pub trait RpcApi: Sized {
 
     fn list_lock_unspent(&self) -> Result<Vec<ListLockUnspentResult>> {
         self.call("listlockunspent", &[])
+    }
+
+    fn list_received_by_address(
+        &self,
+        minconf: Option<usize>,
+        include_empty: Option<bool>,
+        include_watch_only: Option<bool>
+    ) -> Result<Vec<ListReceivedByAddressResult>> {
+        let mut args = [
+            opt_into_json(minconf)?,
+            opt_into_json(include_empty)?,
+            opt_into_json(include_watch_only)?
+        ];
+        self.call("listreceivedbyaddress", handle_defaults(&mut args, &[1.into(), null(), null()]))
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

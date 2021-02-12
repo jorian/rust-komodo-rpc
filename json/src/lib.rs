@@ -12,7 +12,7 @@ extern crate serde_json;
 use serde::{Deserializer, Deserialize, Serialize, Serializer};
 use komodo::{PublicKey, PrivateKey};
 pub use komodo::Address;
-use bitcoin::{PubkeyHash, ScriptHash, BlockHash, Txid};
+use bitcoin::{PubkeyHash, ScriptHash, BlockHash, Txid, Script};
 use komodo::util::amount::Amount;
 use crate::komodo::SignedAmount;
 // use bitcoin::hash_types::*;
@@ -272,4 +272,23 @@ pub struct ListTransactionsResult {
     pub comment: Option<String>,
     otheraccount: Option<String>,
     pub size: u16
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ListUnspentResult {
+    pub txid: Txid,
+    pub vout: u16,
+    pub generated: bool,
+    pub address: Option<Address>,
+    #[serde(rename = "scriptPubKey")]
+    pub script_pub_key: Script,
+    #[serde(
+    with = "komodo::util::amount::serde::as_kmd",
+    default,
+    )]
+    pub amount: SignedAmount,
+    pub confirmations: u32,
+    #[serde(rename = "redeemScript")]
+    pub redeem_script: Option<Script>,
+    pub spendable: bool,
 }

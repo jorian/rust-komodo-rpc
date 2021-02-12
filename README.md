@@ -25,3 +25,4 @@ as long as it is `Sized`?
 - [x] komodo crate with komodo tools
 - [ ] start adding more structure in json workspace
 - [x] deserialize from string into hex type
+- [ ] fork bitcoin script to include CC

@@ -32,7 +32,7 @@
 - [x]   listreceivedbyaddress ( minconf includeempty includeWatchonly)
 - [x]   listsinceblock ( "blockhash" target-confirmations includeWatchonly)
 - [x]   listtransactions ( "account" count from includeWatchonly)
-- [ ]   listunspent ( minconf maxconf  ["address",...] )
+- [x]   listunspent ( minconf maxconf  ["address",...] )
 - [ ]   lockunspent unlock [{"txid":"txid","vout":n},...]
 - [ ]   move "fromaccount" "toaccount" amount ( minconf "comment" )
 - [ ]   opreturn_burn burn_amount hexstring ( txfee )

@@ -399,6 +399,21 @@ pub trait RpcApi: Sized {
         self.call("listtransactions", handle_defaults(&mut args, &[ 10.into(), 0.into(), null() ]))
     }
 
+    fn list_unspent(
+        &self,
+        minconf: Option<usize>,
+        maxconf: Option<usize>,
+        addresses: Option<&[&Address]>,
+    ) -> Result<Vec<ListUnspentResult>> {
+        let mut args = [
+            opt_into_json(minconf)?,
+            opt_into_json(maxconf)?,
+            opt_into_json(addresses)?,
+        ];
+        let defaults = [into_json(0)?, into_json(9999999)?, empty_arr()];
+        self.call("listunspent", handle_defaults(&mut args, &defaults))
+    }
+
     fn get_unconfirmed_balance(&self) -> Result<f64> {
         self.call("getunconfirmedbalance", &[])
     }

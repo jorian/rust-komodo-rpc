@@ -387,7 +387,16 @@ pub trait RpcApi: Sized {
             opt_into_json(target_confirmations)?,
             opt_into_json(include_watch_only)?
         ];
-        self.call("listsinceblock", handle_defaults(&mut args, &[null(), 1.into(), null() ]))
+        self.call("listsinceblock", handle_defaults(&mut args, &[ null(), 1.into(), null() ]))
+    }
+
+    fn list_transactions(&self, count: Option<u32>, from: Option<u32>, include_watch_only: Option<bool>) -> Result<Vec<ListTransactionsResult>> {
+        let mut args = [
+            opt_into_json(count)?,
+            opt_into_json(from)?,
+            opt_into_json(include_watch_only)?
+        ];
+        self.call("listtransactions", handle_defaults(&mut args, &[ 10.into(), 0.into(), null() ]))
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

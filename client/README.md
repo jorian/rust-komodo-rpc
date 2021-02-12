@@ -31,7 +31,7 @@
 - [x]   ~~listreceivedbyaccount ( minconf includeempty includeWatchonly)~~
 - [x]   listreceivedbyaddress ( minconf includeempty includeWatchonly)
 - [x]   listsinceblock ( "blockhash" target-confirmations includeWatchonly)
-- [ ]   listtransactions ( "account" count from includeWatchonly)
+- [x]   listtransactions ( "account" count from includeWatchonly)
 - [ ]   listunspent ( minconf maxconf  ["address",...] )
 - [ ]   lockunspent unlock [{"txid":"txid","vout":n},...]
 - [ ]   move "fromaccount" "toaccount" amount ( minconf "comment" )

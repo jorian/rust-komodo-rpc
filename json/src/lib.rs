@@ -225,21 +225,21 @@ pub struct ListSinceBlockTransactions {
     pub category: ListSinceBlockCategory,
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
     pub amount: SignedAmount,
-    vout: u16,
+    pub vout: u16,
     #[serde(
         with = "komodo::util::amount::serde::as_kmd::opt",
         default,
     )]
-    fee: Option<SignedAmount>,
-    confirmations: u32,
-    blockhash: BlockHash,
-    blockindex: u32,
-    blocktime: u64,
-    txid: Txid,
-    time: u64,
-    timereceived: u64,
-    comment: Option<String>,
-    to: Option<String>,
+    pub fee: Option<SignedAmount>,
+    pub confirmations: u32,
+    pub blockhash: BlockHash,
+    pub blockindex: u32,
+    pub blocktime: u64,
+    pub txid: Txid,
+    pub time: u64,
+    pub timereceived: u64,
+    pub comment: Option<String>,
+    pub to: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -248,4 +248,28 @@ pub enum ListSinceBlockCategory {
     Send,
     #[serde(rename = "receive")]
     Receive
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ListTransactionsResult {
+    account: String,
+    pub address: Address,
+    pub category: ListSinceBlockCategory,
+    #[serde(with = "komodo::util::amount::serde::as_kmd")]
+    pub amount: SignedAmount,
+    pub vout: u16,
+    #[serde(
+    with = "komodo::util::amount::serde::as_kmd::opt",
+    default,
+    )]
+    pub fee: Option<SignedAmount>,
+    pub confirmations: u32,
+    pub blockhash: BlockHash,
+    pub blockindex: u32,
+    pub txid: Txid,
+    pub time: u64,
+    pub timereceived: u64,
+    pub comment: Option<String>,
+    otheraccount: Option<String>,
+    pub size: u16
 }

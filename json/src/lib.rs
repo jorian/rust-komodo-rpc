@@ -9,18 +9,18 @@ pub extern crate komodo;
 extern crate serde;
 extern crate serde_json;
 
-use serde::{Deserializer, Deserialize, Serialize, Serializer};
-use komodo::{PublicKey, PrivateKey};
-pub use komodo::Address;
-use bitcoin::{PubkeyHash, ScriptHash, BlockHash, Txid, Script};
-use komodo::util::amount::Amount;
 use crate::komodo::SignedAmount;
+use bitcoin::{BlockHash, PubkeyHash, Script, ScriptHash, Txid};
+use komodo::util::amount::Amount;
+pub use komodo::Address;
+use komodo::{PrivateKey, PublicKey};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 // use bitcoin::hash_types::*;
 
 #[derive(Clone, Debug)]
 pub enum PubkeyOrAddress<'a> {
     Address(&'a Address),
-    Pubkey(&'a str)
+    Pubkey(&'a str),
 }
 
 impl<'a> serde::Serialize for PubkeyOrAddress<'a> {
@@ -91,7 +91,7 @@ pub struct Block {
     #[serde(rename = "previousblockhash")]
     pub previous_blockhash: Option<bitcoin::BlockHash>,
     #[serde(rename = "nextblockhash")]
-    pub next_blockhash: Option<bitcoin::BlockHash>
+    pub next_blockhash: Option<bitcoin::BlockHash>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -105,7 +105,7 @@ pub struct ValuePool {
     #[serde(rename = "valueDelta")]
     pub value_delta: f64,
     #[serde(rename = "valueDeltaZat")]
-    pub value_delta_sat: u64
+    pub value_delta_sat: u64,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -126,7 +126,7 @@ pub struct WalletInfo {
     pub pay_tx_fee: f64,
     // Todo what is this?
     #[serde(rename = "seedfp")]
-    pub seed_fp: String
+    pub seed_fp: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -136,70 +136,70 @@ pub struct CleanedWalletTransactions {
     #[serde(rename = "remaining_transactons")]
     pub remaining: u8,
     #[serde(rename = "removed_transactions")]
-    pub removed: u8
+    pub removed: u8,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ConvertedPassphrase {
     #[serde(rename = "agamapassphrase")]
-    passphrase: String,
-    address: Address,
+    pub passphrase: String,
+    pub address: Address,
     #[serde(rename = "pubkey")]
-    public_key: PublicKey,
+    pub public_key: PublicKey,
     #[serde(rename = "privkey")]
-    private_key: PrivateKey,
-    wif: PrivateKey
+    pub private_key: PrivateKey,
+    pub wif: PrivateKey,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct GetTransactionResult {
-    amount: f64,
-    fee: Option<f64>,
-    rawconfirmations: u32,
-    confirmations: u32,
-    blockhash: Option<bitcoin::BlockHash>,
-    blockindex: u32,
-    blocktime: Option<u64>,
-    expiryheight: u32,
-    txid: bitcoin::Txid,
-    walletconflicts: Vec<Option<bitcoin::Txid>>,
-    time: u64,
-    timereceived: u64,
-    vjoinsplit: Vec<Option<GetTransactionVJoinSplit>>,
-    hex: String
+    pub amount: f64,
+    pub fee: Option<f64>,
+    pub rawconfirmations: u32,
+    pub confirmations: u32,
+    pub blockhash: Option<bitcoin::BlockHash>,
+    pub blockindex: u32,
+    pub blocktime: Option<u64>,
+    pub expiryheight: u32,
+    pub txid: bitcoin::Txid,
+    pub walletconflicts: Vec<Option<bitcoin::Txid>>,
+    pub time: u64,
+    pub timereceived: u64,
+    pub vjoinsplit: Vec<Option<GetTransactionVJoinSplit>>,
+    pub hex: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct GetTransactionVJoinSplit {
-    anchor: String, // Merkle root
-    nullifiers: Vec<Option<String>>,
-    commitments: Vec<Option<String>>,
-    macs: Vec<Option<String>>,
-    vpub_old: f64,
-    vpub_new: f64,
+    pub anchor: String, // Merkle root
+    pub nullifiers: Vec<Option<String>>,
+    pub commitments: Vec<Option<String>>,
+    pub macs: Vec<Option<String>>,
+    pub vpub_old: f64,
+    pub vpub_new: f64,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct GetTransactionDetails {
     account: String,
-    address: Address,
-    category: GetTransactionDetailsCategory,
-    amount: f64,
-    vout: u16,
-    fee: Option<f64>,
-    size: u32
+    pub address: Address,
+    pub category: GetTransactionDetailsCategory,
+    pub amount: f64,
+    pub vout: u16,
+    pub fee: Option<f64>,
+    pub size: u32,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum GetTransactionDetailsCategory {
     Send,
-    Receive
+    Receive,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ListLockUnspentResult {
     pub txid: bitcoin::Txid,
-    pub vout: u16
+    pub vout: u16,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -210,12 +210,12 @@ pub struct ListReceivedByAddressResult {
     account: String,
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
     pub amount: Amount,
-    pub confirmations: u32
+    pub confirmations: u32,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ListSinceBlockResult {
     pub transactions: Vec<ListSinceBlockTransactions>,
-    pub lastblock: BlockHash
+    pub lastblock: BlockHash,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -226,10 +226,7 @@ pub struct ListSinceBlockTransactions {
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
     pub amount: SignedAmount,
     pub vout: u16,
-    #[serde(
-        with = "komodo::util::amount::serde::as_kmd::opt",
-        default,
-    )]
+    #[serde(with = "komodo::util::amount::serde::as_kmd::opt", default)]
     pub fee: Option<SignedAmount>,
     pub confirmations: u32,
     pub blockhash: BlockHash,
@@ -247,7 +244,7 @@ pub enum ListSinceBlockCategory {
     #[serde(rename = "send")]
     Send,
     #[serde(rename = "receive")]
-    Receive
+    Receive,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -258,10 +255,7 @@ pub struct ListTransactionsResult {
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
     pub amount: SignedAmount,
     pub vout: u16,
-    #[serde(
-    with = "komodo::util::amount::serde::as_kmd::opt",
-    default,
-    )]
+    #[serde(with = "komodo::util::amount::serde::as_kmd::opt", default)]
     pub fee: Option<SignedAmount>,
     pub confirmations: u32,
     pub blockhash: BlockHash,
@@ -271,7 +265,7 @@ pub struct ListTransactionsResult {
     pub timereceived: u64,
     pub comment: Option<String>,
     otheraccount: Option<String>,
-    pub size: u16
+    pub size: u16,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -282,10 +276,7 @@ pub struct ListUnspentResult {
     pub address: Option<Address>,
     #[serde(rename = "scriptPubKey")]
     pub script_pub_key: Script,
-    #[serde(
-    with = "komodo::util::amount::serde::as_kmd",
-    default,
-    )]
+    #[serde(with = "komodo::util::amount::serde::as_kmd", default)]
     pub amount: SignedAmount,
     pub confirmations: u32,
     #[serde(rename = "redeemScript")]

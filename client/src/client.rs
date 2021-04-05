@@ -1,34 +1,35 @@
-use jsonrpc;
-use std::{io, result, fs};
 use crate::error::Error;
-use std::path::{PathBuf, Path};
+use jsonrpc;
 use std::collections::HashMap;
 use std::io::ErrorKind;
+use std::path::{Path, PathBuf};
+use std::{fs, io, result};
 
 use os_info::Type as OSType;
 
-use crate::{bitcoin, json};
-use komodo_rpc_json::bitcoin::hashes::hex::FromHex;
-use komodo_rpc_json::{GetTransactionResult, Address};
-use komodo_rpc_json::komodo::PrivateKey;
+use crate::bitcoin::BlockHash;
 use crate::json::komodo::util::address::AddressType;
 use crate::json::komodo::util::amount::Amount;
+use crate::json::*; //{ListLockUnspentResult, ListReceivedByAddressResult, ListSinceBlockResult};
+use crate::{bitcoin, json};
+use komodo_rpc_json::bitcoin::hashes::hex::FromHex;
 use komodo_rpc_json::komodo::util::amount::Denomination;
-use crate::json::*;//{ListLockUnspentResult, ListReceivedByAddressResult, ListSinceBlockResult};
-use crate::bitcoin::BlockHash;
+use komodo_rpc_json::komodo::PrivateKey;
+use komodo_rpc_json::{Address, GetTransactionResult};
 
 pub type Result<T> = result::Result<T, Error>;
 
 fn into_json<T>(val: T) -> Result<serde_json::Value>
-    where T: serde::ser::Serialize,
+where
+    T: serde::ser::Serialize,
 {
     Ok(serde_json::to_value(val)?)
 }
 
 /// Shorthand for converting an Option into an Option<serde_json::Value>.
 fn opt_into_json<T>(opt: Option<T>) -> Result<serde_json::Value>
-    where
-        T: serde::ser::Serialize,
+where
+    T: serde::ser::Serialize,
 {
     match opt {
         Some(val) => Ok(into_json(val)?),
@@ -119,7 +120,7 @@ impl ConfigFile {
             match os_info::get().os_type() {
                 OSType::Ubuntu | OSType::Linux => path.push(".komodo"),
                 OSType::Macos | OSType::Windows => path.push("Komodo"),
-                _ => return Err(Error::IOError(io::Error::from(ErrorKind::Other)))
+                _ => return Err(Error::IOError(io::Error::from(ErrorKind::Other))),
             }
 
             if !path.is_dir() {
@@ -128,7 +129,7 @@ impl ConfigFile {
 
             Ok(path)
         } else {
-            return Err(Error::IOError(io::Error::from(ErrorKind::NotFound)))
+            return Err(Error::IOError(io::Error::from(ErrorKind::NotFound)));
         }
     }
 
@@ -137,7 +138,7 @@ impl ConfigFile {
         match coin {
             "KMD" => {
                 path.push("komodo.conf");
-            },
+            }
             _ => {
                 path.push(&coin.to_ascii_uppercase());
                 path.push(format!("{}.conf", &coin.to_ascii_uppercase()));
@@ -145,39 +146,34 @@ impl ConfigFile {
         }
 
         if !path.exists() {
-            return Err(Error::IOError(io::Error::from(ErrorKind::NotFound)))
+            return Err(Error::IOError(io::Error::from(ErrorKind::NotFound)));
         }
 
         let contents = fs::read_to_string(path.to_str().unwrap())?;
 
-        let map: HashMap<String, String> = contents.as_str()
+        let map: HashMap<String, String> = contents
+            .as_str()
             .split('\n')
             .map(|line| line.splitn(2, '=').collect::<Vec<&str>>())
             .filter(|vec| vec.len() == 2)
-            .map(|vec| (
-                vec[0].to_string(),
-                vec[1].to_string()
-            ))
+            .map(|vec| (vec[0].to_string(), vec[1].to_string()))
             .collect::<HashMap<String, String>>();
 
         let _rpc_user = map.get("rpcuser").ok_or(Error::InvalidConfigFile)?;
         let _rpc_password = map.get("rpcpassword").ok_or(Error::InvalidConfigFile)?;
-        let _rpc_port =
-            match coin {
-                // KMD doesn't put rpcport in conf file at install, but users could have modified it afterwards.
-                "KMD" => {
-                    match map.get("rpcport") {
-                        Some(port) => port,
-                        None => "7771"
-                    }
-                }
-                _ => map.get("rpcport").ok_or(Error::InvalidConfigFile)?,
-            };
+        let _rpc_port = match coin {
+            // KMD doesn't put rpcport in conf file at install, but users could have modified it afterwards.
+            "KMD" => match map.get("rpcport") {
+                Some(port) => port,
+                None => "7771",
+            },
+            _ => map.get("rpcport").ok_or(Error::InvalidConfigFile)?,
+        };
 
         Ok(ConfigFile {
-            rpcuser:       _rpc_user.to_owned(),
-            rpcpassword:   _rpc_password.to_owned(),
-            rpcport:       _rpc_port.parse::<u16>()?
+            rpcuser: _rpc_user.to_owned(),
+            rpcpassword: _rpc_password.to_owned(),
+            rpcport: _rpc_port.parse::<u16>()?,
         })
     }
 }
@@ -195,19 +191,13 @@ impl Client {
                     client: jsonrpc::client::Client::new(
                         format!("http://127.0.0.1:{}", config.rpcport),
                         Some(config.rpcuser),
-                        Some(config.rpcpassword)
-                    )
-                })
-            },
-            Auth::UserPass(url, rpcuser, rpcpassword) => {
-                Ok(Client {
-                    client: jsonrpc::client::Client::new(
-                        url,
-                        Some(rpcuser),
-                        Some(rpcpassword)
-                    )
+                        Some(config.rpcpassword),
+                    ),
                 })
             }
+            Auth::UserPass(url, rpcuser, rpcpassword) => Ok(Client {
+                client: jsonrpc::client::Client::new(url, Some(rpcuser), Some(rpcpassword)),
+            }),
         }
     }
 }
@@ -216,7 +206,7 @@ impl RpcApi for Client {
     fn call<T: for<'a> serde::de::Deserialize<'a>>(
         &self,
         cmd: &str,
-        args: &[serde_json::Value]
+        args: &[serde_json::Value],
     ) -> Result<T> {
         let req = self.client.build_request(&cmd, &args);
         let resp = self.client.send_request(&req).map_err(Error::from);
@@ -235,7 +225,8 @@ impl RpcApi for Client {
 // (Higher-Ranked Trait Bounds)
 pub trait RpcApi: Sized {
     fn call<T: for<'a> serde::de::Deserialize<'a>>(
-        &self, cmd: &str,
+        &self,
+        cmd: &str,
         args: &[serde_json::Value],
     ) -> Result<T>;
 
@@ -272,20 +263,29 @@ pub trait RpcApi: Sized {
 
     // Label is deprecated and thus not used in the method call.
     // Todo keys are either an address or a pubkey.
-    fn add_multi_sig_address(&self, n_required: u8, keys: &[json::PubkeyOrAddress]) -> Result<String> {
+    fn add_multi_sig_address(
+        &self,
+        n_required: u8,
+        keys: &[json::PubkeyOrAddress],
+    ) -> Result<String> {
         // maximum of 15 in a msig.
         if n_required > 15 {
-            return Err(Error::KMDError(String::from("No more than 15 signers in a msig allowed")))
+            return Err(Error::KMDError(String::from(
+                "No more than 15 signers in a msig allowed",
+            )));
         }
 
         self.call("addmultisigaddress", &[n_required.into(), into_json(keys)?])
     }
 
     fn backup_wallet(&self, destination: &str) -> Result<PathBuf> {
-        self.call("backupwallet", &[destination.into()]).map(|path: String| PathBuf::from(&path))
+        self.call("backupwallet", &[destination.into()])
+            .map(|path: String| PathBuf::from(&path))
     }
 
-    fn clean_wallet_transactions(&self) -> Result<json::CleanedWalletTransactions> { self.call("cleanwallettransactions", &[]) }
+    fn clean_wallet_transactions(&self) -> Result<json::CleanedWalletTransactions> {
+        self.call("cleanwallettransactions", &[])
+    }
 
     fn convert_passphrase(&self, passphrase: &str) -> Result<json::ConvertedPassphrase> {
         self.call("convertpassphrase", &[passphrase.into()])
@@ -293,22 +293,30 @@ pub trait RpcApi: Sized {
 
     fn dump_privkey(&self, address: json::Address) -> Result<PrivateKey> {
         match address.addr_type {
-            AddressType::Shielded => return Err(Error::KMDError(String::from("no support for shielded addresses for this call"))),
+            AddressType::Shielded => {
+                return Err(Error::KMDError(String::from(
+                    "no support for shielded addresses for this call",
+                )))
+            }
             _ => {}
         }
         self.call("dumpprivkey", &[address.to_string().into()])
     }
 
-    fn get_balance(&self, minconf: Option<usize>, include_watchonly: Option<bool>) -> Result<Amount> {
-        let mut args = ["*".into(), opt_into_json(minconf)?, opt_into_json(include_watchonly)?];
-        Ok(
-            Amount::from_kmd(
-                self.call(
-                    "getbalance",
-                    handle_defaults(&mut args, &[0.into(), null()])
-                )?
-            )?
-        )
+    fn get_balance(
+        &self,
+        minconf: Option<usize>,
+        include_watchonly: Option<bool>,
+    ) -> Result<Amount> {
+        let mut args = [
+            "*".into(),
+            opt_into_json(minconf)?,
+            opt_into_json(include_watchonly)?,
+        ];
+        Ok(Amount::from_kmd(self.call(
+            "getbalance",
+            handle_defaults(&mut args, &[0.into(), null()]),
+        )?)?)
     }
 
     fn get_new_address(&self) -> Result<Address> {
@@ -321,14 +329,17 @@ pub trait RpcApi: Sized {
 
     fn get_received_by_address(&self, address: &Address, minconf: Option<usize>) -> Result<Amount> {
         let mut args = [address.to_string().into(), opt_into_json(minconf)?];
-        Ok(
-            Amount::from_kmd(
-            self.call("getreceivedbyaddress", handle_defaults(&mut args, &[1.into()]))?
-            )?
-        )
+        Ok(Amount::from_kmd(self.call(
+            "getreceivedbyaddress",
+            handle_defaults(&mut args, &[1.into()]),
+        )?)?)
     }
 
-    fn get_transaction(&self, txid: &bitcoin::Txid, include_watch_only: Option<bool>) -> Result<GetTransactionResult> {
+    fn get_transaction(
+        &self,
+        txid: &bitcoin::Txid,
+        include_watch_only: Option<bool>,
+    ) -> Result<GetTransactionResult> {
         let mut args = [into_json(txid)?, opt_into_json(include_watch_only)?];
         self.call("gettransaction", handle_defaults(&mut args, &[null()]))
     }
@@ -339,18 +350,32 @@ pub trait RpcApi: Sized {
         label: Option<&str>,
         rescan: Option<bool>,
     ) -> Result<()> {
-        let mut args = [address.to_string().into(), opt_into_json(label)?, opt_into_json(rescan)?];
-        self.call("importaddress", handle_defaults(&mut args, &[into_json("")?, null()]))
+        let mut args = [
+            address.to_string().into(),
+            opt_into_json(label)?,
+            opt_into_json(rescan)?,
+        ];
+        self.call(
+            "importaddress",
+            handle_defaults(&mut args, &[into_json("")?, null()]),
+        )
     }
 
     fn import_private_key(
-        &self, 
+        &self,
         privkey: &PrivateKey,
         label: Option<&str>,
         rescan: Option<bool>,
     ) -> Result<Address> {
-        let mut args = [privkey.to_string().into(), opt_into_json(label)?, opt_into_json(rescan)?];
-        self.call("importprivkey", handle_defaults(&mut args, &[into_json("")?, null()]))
+        let mut args = [
+            privkey.to_string().into(),
+            opt_into_json(label)?,
+            opt_into_json(rescan)?,
+        ];
+        self.call(
+            "importprivkey",
+            handle_defaults(&mut args, &[into_json("")?, null()]),
+        )
     }
 
     fn keypool_refill(&self, newsize: Option<usize>) -> Result<()> {
@@ -366,37 +391,51 @@ pub trait RpcApi: Sized {
         &self,
         minconf: Option<usize>,
         include_empty: Option<bool>,
-        include_watch_only: Option<bool>
+        include_watch_only: Option<bool>,
     ) -> Result<Vec<ListReceivedByAddressResult>> {
         let mut args = [
             opt_into_json(minconf)?,
             opt_into_json(include_empty)?,
-            opt_into_json(include_watch_only)?
+            opt_into_json(include_watch_only)?,
         ];
-        self.call("listreceivedbyaddress", handle_defaults(&mut args, &[1.into(), null(), null()]))
+        self.call(
+            "listreceivedbyaddress",
+            handle_defaults(&mut args, &[1.into(), null(), null()]),
+        )
     }
 
     fn list_since_block(
         &self,
         blockhash: Option<&BlockHash>,
         target_confirmations: Option<usize>,
-        include_watch_only: Option<bool>
+        include_watch_only: Option<bool>,
     ) -> Result<ListSinceBlockResult> {
         let mut args = [
             opt_into_json(blockhash)?,
             opt_into_json(target_confirmations)?,
-            opt_into_json(include_watch_only)?
+            opt_into_json(include_watch_only)?,
         ];
-        self.call("listsinceblock", handle_defaults(&mut args, &[ null(), 1.into(), null() ]))
+        self.call(
+            "listsinceblock",
+            handle_defaults(&mut args, &[null(), 1.into(), null()]),
+        )
     }
 
-    fn list_transactions(&self, count: Option<u32>, from: Option<u32>, include_watch_only: Option<bool>) -> Result<Vec<ListTransactionsResult>> {
+    fn list_transactions(
+        &self,
+        count: Option<u32>,
+        from: Option<u32>,
+        include_watch_only: Option<bool>,
+    ) -> Result<Vec<ListTransactionsResult>> {
         let mut args = [
             opt_into_json(count)?,
             opt_into_json(from)?,
-            opt_into_json(include_watch_only)?
+            opt_into_json(include_watch_only)?,
         ];
-        self.call("listtransactions", handle_defaults(&mut args, &[ 10.into(), 0.into(), null() ]))
+        self.call(
+            "listtransactions",
+            handle_defaults(&mut args, &[10.into(), 0.into(), null()]),
+        )
     }
 
     fn list_unspent(
@@ -429,7 +468,7 @@ pub trait RpcApi: Sized {
 
 #[cfg(test)]
 mod tests {
-    use crate::client::{ConfigFile, Client, Auth};
+    use crate::client::{Auth, Client, ConfigFile};
 
     // todo https://github.com/iredelmeier/filesystem-rs/blob/master/src/lib.rs
 
@@ -441,11 +480,14 @@ mod tests {
         let client = Client::new("KMD", Auth::ConfigFile);
         assert!(client.is_ok());
 
-        let client = Client::new("KMD", Auth::UserPass(
-            "http://127.0.0.1:7771".to_string(),
-            "123kjh12jkl3h1kl23jh".to_string(),
-            "213kj4h2kl3j4h23kl4jh".to_string()
-        ));
+        let client = Client::new(
+            "KMD",
+            Auth::UserPass(
+                "http://127.0.0.1:7771".to_string(),
+                "123kjh12jkl3h1kl23jh".to_string(),
+                "213kj4h2kl3j4h23kl4jh".to_string(),
+            ),
+        );
         assert!(client.is_ok());
 
         let config_file = ConfigFile::new("ILN");

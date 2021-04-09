@@ -285,7 +285,75 @@ pub struct ListUnspentResult {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct GetRawTransactionResultVerbose {}
+pub struct GetRawTransactionResultVerbose {
+    hex: String,
+    txid: bitcoin::Txid,
+    version: u16,
+    locktime: u64,
+    expiryheight: u32,
+    vin: Vec<GetRawTransactionVin>,
+    vout: Vec<GetRawTransactionVout>,
+    vjoinsplit: Vec<GetRawTransactionVJoinSplit>,
+    blockhash: bitcoin::BlockHash,
+    confirmations: u32,
+    rawconfirmations: u32,
+    time: u64,
+    blocktime: u64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GetRawTransactionVin {
+    txid: bitcoin::Txid,
+    vout: u32,
+    #[serde(rename = "scriptSig")]
+    script_sig: GetRawTransactionVinScriptSig,
+    sequence: u16,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GetRawTransactionVinScriptSig {
+    asm: String,
+    hex: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GetRawTransactionVout {
+    #[serde(with = "komodo::util::amount::serde::as_kmd")]
+    value: Amount,
+    n: u32,
+    #[serde(rename = "scriptPubKey")]
+    script_pubkey: GetRawTransactionVoutScriptPubKey,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GetRawTransactionVoutScriptPubKey {
+    asm: String,
+    hex: String,
+    #[serde(rename = "reqSigs")]
+    required_sigs: u16,
+    #[serde(rename = "type")]
+    _type: String,
+    addresses: Vec<Address>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct GetRawTransactionVJoinSplit {
+    #[serde(with = "komodo::util::amount::serde::as_kmd")]
+    vpub_old: Amount,
+    #[serde(with = "komodo::util::amount::serde::as_kmd")]
+    vpub_new: Amount,
+    anchor: String,
+    // TODO hexes:
+    nullifiers: Vec<String>,
+    commitments: Vec<String>,
+    #[serde(rename = "onetimePubKey")]
+    onetime_pubkey: String,
+    #[serde(rename = "randomSeed")]
+    random_seed: String,
+    macs: Vec<String>,
+    proof: String,
+    ciphertexts: Vec<String>,
+}
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct GetRawTransactionResult;
+pub struct GetRawTransactionResult(String);

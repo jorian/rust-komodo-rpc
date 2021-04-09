@@ -230,6 +230,17 @@ pub trait RpcApi: Sized {
         args: &[serde_json::Value],
     ) -> Result<T>;
 
+    fn get_raw_transaction_verbose(
+        &self,
+        txid: &bitcoin::Txid,
+    ) -> Result<json::GetRawTransactionResultVerbose> {
+        self.call("getrawtransaction", &[into_json(txid)?, 1.into()])
+    }
+
+    fn get_raw_transaction(&self, txid: &bitcoin::Txid) -> Result<json::GetRawTransactionResult> {
+        self.call("getrawtransaction", &[into_json(txid)?, 0.into()])
+    }
+
     /// Get block hash at a given height
     fn get_block_hash(&self, height: u64) -> Result<bitcoin::BlockHash> {
         self.call("getblockhash", &[height.into()])

@@ -283,3 +283,9 @@ pub struct ListUnspentResult {
     pub redeem_script: Option<Script>,
     pub spendable: bool,
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GetRawTransactionResultVerbose {}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GetRawTransactionResult;

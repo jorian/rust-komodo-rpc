@@ -2,73 +2,75 @@
 
 - Accounts are not supported in Komodo and will not be implemented here.
 
+- [x] getrawtransaction "txid" ( verbose )
+
 ### Wallet
 
-- [x]   addmultisigaddress nrequired ["key",...] ( "account" )
-- [x]   backupwallet "destination"
-- [x]   cleanwallettransactions "txid"
-- [x]   convertpassphrase "agamapassphrase"
-- [x]   dumpprivkey "t-addr"
-- [ ]   dumpwallet "filename"
-- [x]   ~~getaccount "KMD_address"~~
-- [x]   ~~getaccountaddress "account"~~
-- [x]   ~~getaddressesbyaccount "account"~~
-- [x]   getbalance ( ~~"account"~~ minconf includeWatchonly )
-- [x]   getnewaddress ~~( "account" )~~
-- [x]   getrawchangeaddress
-- [x]   ~~getreceivedbyaccount "account" ( minconf )~~
-- [x]   getreceivedbyaddress "KMD_address" ( minconf )
-- [x]   gettransaction "txid" ( includeWatchonly )
-- [x]   getunconfirmedbalance
-- [x]   getwalletinfo
-- [x]   importaddress "address" ( "label" rescan )
-- [x]   importprivkey "komodoprivkey" ( "label" rescan height secret_key)
-- [ ]   importwallet "filename"
-- [x]   keypoolrefill ( newsize )
-- [x]   ~~listaccounts ( minconf includeWatchonly)~~
-- [x]   ~~listaddressgroupings~~
-- [x]   listlockunspent
-- [x]   ~~listreceivedbyaccount ( minconf includeempty includeWatchonly)~~
-- [x]   listreceivedbyaddress ( minconf includeempty includeWatchonly)
-- [x]   listsinceblock ( "blockhash" target-confirmations includeWatchonly)
-- [x]   listtransactions ( "account" count from includeWatchonly)
-- [x]   listunspent ( minconf maxconf  ["address",...] )
-- [ ]   lockunspent unlock [{"txid":"txid","vout":n},...]
-- [ ]   move "fromaccount" "toaccount" amount ( minconf "comment" )
-- [ ]   opreturn_burn burn_amount hexstring ( txfee )
-- [ ]   resendwallettransactions
-- [ ]   sendfrom "fromaccount" "toKMDaddress" amount ( minconf "comment" "comment-to" )
-- [ ]   sendmany "fromaccount" {"address":amount,...} ( minconf "comment" ["address",...] )
-- [ ]   sendtoaddress "KMD_address" amount ( "comment" "comment-to" subtractfeefromamount )
-- [x]   ~~setaccount "KMD_address" "account"~~
-- [ ]   setpubkey
-- [ ]   setstakingsplit
-- [x]   settxfee amount
-- [ ]   signmessage "t-addr" "message"
-- [ ]   walletlock
-- [ ]   walletpassphrase "passphrase" timeout
-- [ ]   walletpassphrasechange "oldpassphrase" "newpassphrase"
-- [ ]   z_exportkey "zaddr"
-- [ ]   z_exportviewingkey "zaddr"
-- [ ]   z_exportwallet "filename"
-- [ ]   z_getbalance "address" ( minconf )
-- [ ]   z_getnewaddress ( type )
-- [ ]   z_getoperationresult (["operationid", ... ]) 
-- [ ]   z_getoperationstatus (["operationid", ... ]) 
-- [ ]   z_gettotalbalance ( minconf includeWatchonly )
-- [ ]   z_importkey "zkey" ( rescan startHeight )
-- [ ]   z_importviewingkey "vkey" ( rescan startHeight )
-- [ ]   z_importwallet "filename"
-- [ ]   z_listaddresses ( includeWatchonly )
-- [ ]   z_listoperationids
-- [ ]   z_listreceivedbyaddress "address" ( minconf )
-- [ ]   z_listunspent ( minconf maxconf includeWatchonly ["zaddr",...] )
-- [ ]   z_mergetoaddress ["fromaddress", ... ] "toaddress" ( fee ) ( transparent_limit ) ( shielded_limit ) ( memo )
-- [ ]   z_sendmany "fromaddress" [{"address":... ,"amount":...},...] ( minconf ) ( fee )
-- [ ]   z_shieldcoinbase "fromaddress" "tozaddress" ( fee ) ( limit )
-- [ ]   z_viewtransaction "txid"
-- [ ]   zcbenchmark benchmarktype samplecount
-- [ ]   zcrawjoinsplit rawtx inputs outputs vpub_old vpub_new
-- [ ]   zcrawkeygen
-- [ ]   zcrawreceive zcsecretkey encryptednote
-- [ ]   zcsamplejoinsplit
+- [x] addmultisigaddress nrequired ["key",...] ( "account" )
+- [x] backupwallet "destination"
+- [x] cleanwallettransactions "txid"
+- [x] convertpassphrase "agamapassphrase"
+- [x] dumpprivkey "t-addr"
+- [ ] dumpwallet "filename"
+- [x] ~~getaccount "KMD_address"~~
+- [x] ~~getaccountaddress "account"~~
+- [x] ~~getaddressesbyaccount "account"~~
+- [x] getbalance ( ~~"account"~~ minconf includeWatchonly )
+- [x] getnewaddress ~~( "account" )~~
+- [x] getrawchangeaddress
+- [x] ~~getreceivedbyaccount "account" ( minconf )~~
+- [x] getreceivedbyaddress "KMD_address" ( minconf )
+- [x] gettransaction "txid" ( includeWatchonly )
+- [x] getunconfirmedbalance
+- [x] getwalletinfo
+- [x] importaddress "address" ( "label" rescan )
+- [x] importprivkey "komodoprivkey" ( "label" rescan height secret_key)
+- [ ] importwallet "filename"
+- [x] keypoolrefill ( newsize )
+- [x] ~~listaccounts ( minconf includeWatchonly)~~
+- [x] ~~listaddressgroupings~~
+- [x] listlockunspent
+- [x] ~~listreceivedbyaccount ( minconf includeempty includeWatchonly)~~
+- [x] listreceivedbyaddress ( minconf includeempty includeWatchonly)
+- [x] listsinceblock ( "blockhash" target-confirmations includeWatchonly)
+- [x] listtransactions ( "account" count from includeWatchonly)
+- [x] listunspent ( minconf maxconf ["address",...] )
+- [ ] lockunspent unlock [{"txid":"txid","vout":n},...]
+- [ ] move "fromaccount" "toaccount" amount ( minconf "comment" )
+- [ ] opreturn_burn burn_amount hexstring ( txfee )
+- [ ] resendwallettransactions
+- [ ] sendfrom "fromaccount" "toKMDaddress" amount ( minconf "comment" "comment-to" )
+- [ ] sendmany "fromaccount" {"address":amount,...} ( minconf "comment" ["address",...] )
+- [ ] sendtoaddress "KMD_address" amount ( "comment" "comment-to" subtractfeefromamount )
+- [x] ~~setaccount "KMD_address" "account"~~
+- [ ] setpubkey
+- [ ] setstakingsplit
+- [x] settxfee amount
+- [ ] signmessage "t-addr" "message"
+- [ ] walletlock
+- [ ] walletpassphrase "passphrase" timeout
+- [ ] walletpassphrasechange "oldpassphrase" "newpassphrase"
+- [ ] z_exportkey "zaddr"
+- [ ] z_exportviewingkey "zaddr"
+- [ ] z_exportwallet "filename"
+- [ ] z_getbalance "address" ( minconf )
+- [ ] z_getnewaddress ( type )
+- [ ] z_getoperationresult (["operationid", ... ])
+- [ ] z_getoperationstatus (["operationid", ... ])
+- [ ] z_gettotalbalance ( minconf includeWatchonly )
+- [ ] z_importkey "zkey" ( rescan startHeight )
+- [ ] z_importviewingkey "vkey" ( rescan startHeight )
+- [ ] z_importwallet "filename"
+- [ ] z_listaddresses ( includeWatchonly )
+- [ ] z_listoperationids
+- [ ] z_listreceivedbyaddress "address" ( minconf )
+- [ ] z_listunspent ( minconf maxconf includeWatchonly ["zaddr",...] )
+- [ ] z_mergetoaddress ["fromaddress", ... ] "toaddress" ( fee ) ( transparent_limit ) ( shielded_limit ) ( memo )
+- [ ] z_sendmany "fromaddress" [{"address":... ,"amount":...},...] ( minconf ) ( fee )
+- [ ] z_shieldcoinbase "fromaddress" "tozaddress" ( fee ) ( limit )
+- [ ] z_viewtransaction "txid"
+- [ ] zcbenchmark benchmarktype samplecount
+- [ ] zcrawjoinsplit rawtx inputs outputs vpub_old vpub_new
+- [ ] zcrawkeygen
+- [ ] zcrawreceive zcsecretkey encryptednote
+- [ ] zcsamplejoinsplit

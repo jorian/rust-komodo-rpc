@@ -286,73 +286,73 @@ pub struct ListUnspentResult {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct GetRawTransactionResultVerbose {
-    hex: String,
-    txid: bitcoin::Txid,
-    version: u16,
-    locktime: u64,
-    expiryheight: u32,
-    vin: Vec<GetRawTransactionVin>,
-    vout: Vec<GetRawTransactionVout>,
-    vjoinsplit: Vec<GetRawTransactionVJoinSplit>,
-    blockhash: bitcoin::BlockHash,
-    confirmations: u32,
-    rawconfirmations: u32,
-    time: u64,
-    blocktime: u64,
+    pub hex: String,
+    pub txid: bitcoin::Txid,
+    pub version: u16,
+    pub locktime: u64,
+    pub expiryheight: u32,
+    pub vin: Vec<GetRawTransactionVin>,
+    pub vout: Vec<GetRawTransactionVout>,
+    pub vjoinsplit: Vec<GetRawTransactionVJoinSplit>,
+    pub blockhash: bitcoin::BlockHash,
+    pub confirmations: u32,
+    pub rawconfirmations: u32,
+    pub time: u64,
+    pub blocktime: u64,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GetRawTransactionVin {
-    txid: bitcoin::Txid,
-    vout: u32,
+    pub txid: bitcoin::Txid,
+    pub vout: u32,
     #[serde(rename = "scriptSig")]
-    script_sig: GetRawTransactionVinScriptSig,
-    sequence: u16,
+    pub script_sig: GetRawTransactionVinScriptSig,
+    pub sequence: u16,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GetRawTransactionVinScriptSig {
-    asm: String,
-    hex: String,
+    pub asm: String,
+    pub hex: String,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GetRawTransactionVout {
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
-    value: Amount,
-    n: u32,
+    pub value: Amount,
+    pub n: u32,
     #[serde(rename = "scriptPubKey")]
-    script_pubkey: GetRawTransactionVoutScriptPubKey,
+    pub script_pubkey: GetRawTransactionVoutScriptPubKey,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GetRawTransactionVoutScriptPubKey {
-    asm: String,
-    hex: String,
+    pub asm: String,
+    pub hex: String,
     #[serde(rename = "reqSigs")]
-    required_sigs: u16,
+    pub required_sigs: u16,
     #[serde(rename = "type")]
-    _type: String,
-    addresses: Vec<Address>,
+    pub _type: String,
+    pub addresses: Vec<Address>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GetRawTransactionVJoinSplit {
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
-    vpub_old: Amount,
+    pub vpub_old: Amount,
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
-    vpub_new: Amount,
-    anchor: String,
+    pub vpub_new: Amount,
+    pub anchor: String,
     // TODO hexes:
-    nullifiers: Vec<String>,
-    commitments: Vec<String>,
+    pub nullifiers: Vec<String>,
+    pub commitments: Vec<String>,
     #[serde(rename = "onetimePubKey")]
-    onetime_pubkey: String,
+    pub onetime_pubkey: String,
     #[serde(rename = "randomSeed")]
-    random_seed: String,
-    macs: Vec<String>,
-    proof: String,
-    ciphertexts: Vec<String>,
+    pub random_seed: String,
+    pub macs: Vec<String>,
+    pub proof: String,
+    pub ciphertexts: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

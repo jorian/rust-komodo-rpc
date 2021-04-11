@@ -288,7 +288,7 @@ pub struct ListUnspentResult {
 pub struct GetRawTransactionResultVerbose {
     pub hex: String,
     pub txid: bitcoin::Txid,
-    pub version: u16,
+    pub version: u32,
     pub locktime: u64,
     pub expiryheight: u32,
     pub vin: Vec<GetRawTransactionVin>,
@@ -307,7 +307,7 @@ pub struct GetRawTransactionVin {
     pub vout: u32,
     #[serde(rename = "scriptSig")]
     pub script_sig: GetRawTransactionVinScriptSig,
-    pub sequence: u16,
+    pub sequence: u32,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -330,7 +330,7 @@ pub struct GetRawTransactionVoutScriptPubKey {
     pub asm: String,
     pub hex: String,
     #[serde(rename = "reqSigs")]
-    pub required_sigs: u16,
+    pub required_sigs: u32,
     #[serde(rename = "type")]
     pub _type: String,
     pub addresses: Vec<Address>,

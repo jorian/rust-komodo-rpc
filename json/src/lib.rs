@@ -330,7 +330,7 @@ pub struct GetRawTransactionVoutScriptPubKey {
     pub asm: String,
     pub hex: String,
     #[serde(rename = "reqSigs")]
-    pub required_sigs: u32,
+    pub required_sigs: Option<u32>,
     #[serde(rename = "type")]
     pub _type: String,
     pub addresses: Vec<Address>,

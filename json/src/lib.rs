@@ -320,6 +320,8 @@ pub struct GetRawTransactionVinScriptSig {
 pub struct GetRawTransactionVout {
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
     pub value: Amount,
+    #[serde(with = "komodo::util::amount::serde::as_kmd::opt")]
+    pub interest: Option<Amount>,
     pub n: u32,
     #[serde(rename = "scriptPubKey")]
     pub script_pubkey: GetRawTransactionVoutScriptPubKey,

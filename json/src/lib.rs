@@ -333,7 +333,7 @@ pub struct GetRawTransactionVoutScriptPubKey {
     pub required_sigs: Option<u32>,
     #[serde(rename = "type")]
     pub _type: String,
-    pub addresses: Vec<Address>,
+    pub addresses: Option<Vec<Address>>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

@@ -505,6 +505,19 @@ pub trait RpcApi: Sized {
         self.call("lockunspent", &[true.into(), outputs.into()])
     }
 
+    fn opreturn_burn(
+        &self,
+        amount: f64,
+        hex_str: &str,
+        txfee: Option<f64>,
+    ) -> Result<OpReturnBurnResult> {
+        let mut args = [amount.into(), hex_str.into(), opt_into_json(txfee)?];
+        self.call(
+            "opreturn_burn",
+            handle_defaults(&mut args, &[into_json(0.0001)?]),
+        )
+    }
+
     fn get_unconfirmed_balance(&self) -> Result<f64> {
         self.call("getunconfirmedbalance", &[])
     }

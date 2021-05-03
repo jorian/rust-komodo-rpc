@@ -359,3 +359,8 @@ pub struct GetRawTransactionVJoinSplit {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct GetRawTransactionResult(String);
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct OpReturnBurnResult {
+    hex: String,
+}

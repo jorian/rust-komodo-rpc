@@ -35,8 +35,8 @@
 - [x] listsinceblock ( "blockhash" target-confirmations includeWatchonly)
 - [x] listtransactions ( "account" count from includeWatchonly)
 - [x] listunspent ( minconf maxconf ["address",...] )
-- [ ] lockunspent unlock [{"txid":"txid","vout":n},...]
-- [ ] move "fromaccount" "toaccount" amount ( minconf "comment" )
+- [x] lockunspent unlock [{"txid":"txid","vout":n},...]
+- [ ] ~~move "fromaccount" "toaccount" amount ( minconf "comment" )~~
 - [ ] opreturn_burn burn_amount hexstring ( txfee )
 - [ ] resendwallettransactions
 - [ ] sendfrom "fromaccount" "toKMDaddress" amount ( minconf "comment" "comment-to" )

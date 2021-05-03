@@ -9,11 +9,11 @@ extern crate serde_json;
 pub extern crate jsonrpc;
 
 pub extern crate komodo_rpc_json;
-pub use komodo_rpc_json as json;
 pub use json::bitcoin;
+pub use komodo_rpc_json as json;
 
-mod error;
 mod client;
+mod error;
 
 pub use client::*;
 pub use error::Error;

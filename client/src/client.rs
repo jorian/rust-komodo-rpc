@@ -2,7 +2,7 @@ use crate::error::Error;
 use jsonrpc;
 use std::collections::HashMap;
 use std::io::ErrorKind;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::{fs, io, result};
 
 use os_info::Type as OSType;
@@ -10,14 +10,38 @@ use os_info::Type as OSType;
 use crate::bitcoin::BlockHash;
 use crate::json::komodo::util::address::AddressType;
 use crate::json::komodo::util::amount::Amount;
-use crate::json::*; //{ListLockUnspentResult, ListReceivedByAddressResult, ListSinceBlockResult};
+use crate::json::*;
 use crate::{bitcoin, json};
-use komodo_rpc_json::bitcoin::hashes::hex::FromHex;
-use komodo_rpc_json::komodo::util::amount::Denomination;
+// use crate::bitcoin::OutPoint;
+
 use komodo_rpc_json::komodo::PrivateKey;
 use komodo_rpc_json::{Address, GetTransactionResult};
 
 pub type Result<T> = result::Result<T, Error>;
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+struct JsonOutPoint {
+    pub txid: bitcoin::Txid,
+    pub vout: u32,
+}
+
+impl From<bitcoin::OutPoint> for JsonOutPoint {
+    fn from(o: bitcoin::OutPoint) -> JsonOutPoint {
+        JsonOutPoint {
+            txid: o.txid,
+            vout: o.vout,
+        }
+    }
+}
+
+impl Into<bitcoin::OutPoint> for JsonOutPoint {
+    fn into(self) -> bitcoin::OutPoint {
+        bitcoin::OutPoint {
+            txid: self.txid,
+            vout: self.vout,
+        }
+    }
+}
 
 fn into_json<T>(val: T) -> Result<serde_json::Value>
 where
@@ -211,7 +235,7 @@ impl RpcApi for Client {
         let req = self.client.build_request(&cmd, &args);
         let resp = self.client.send_request(&req).map_err(Error::from);
 
-        dbg!(&resp);
+        // dbg!(&resp);
 
         Ok(resp?.into_result()?)
     }
@@ -462,6 +486,23 @@ pub trait RpcApi: Sized {
         ];
         let defaults = [into_json(0)?, into_json(9999999)?, empty_arr()];
         self.call("listunspent", handle_defaults(&mut args, &defaults))
+    }
+
+    /// To unlock, use [unlock_unspent].
+    fn lock_unspent(&self, outputs: &[bitcoin::OutPoint]) -> Result<bool> {
+        let outputs: Vec<_> = outputs
+            .into_iter()
+            .map(|o| serde_json::to_value(JsonOutPoint::from(*o)).unwrap())
+            .collect();
+        self.call("lockunspent", &[false.into(), outputs.into()])
+    }
+
+    fn unlock_unspent(&self, outputs: &[bitcoin::OutPoint]) -> Result<bool> {
+        let outputs: Vec<_> = outputs
+            .into_iter()
+            .map(|o| serde_json::to_value(JsonOutPoint::from(*o)).unwrap())
+            .collect();
+        self.call("lockunspent", &[true.into(), outputs.into()])
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

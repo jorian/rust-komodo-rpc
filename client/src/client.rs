@@ -518,6 +518,10 @@ pub trait RpcApi: Sized {
         )
     }
 
+    fn resend_wallet_transactions(&self) -> Result<Vec<bitcoin::Txid>> {
+        self.call("resendwallettransactions", &[])
+    }
+
     fn get_unconfirmed_balance(&self) -> Result<f64> {
         self.call("getunconfirmedbalance", &[])
     }

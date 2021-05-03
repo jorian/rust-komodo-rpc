@@ -38,7 +38,7 @@
 - [x] lockunspent unlock [{"txid":"txid","vout":n},...]
 - [ ] ~~move "fromaccount" "toaccount" amount ( minconf "comment" )~~
 - [x] opreturn_burn burn_amount hexstring ( txfee )
-- [ ] resendwallettransactions
+- [x] resendwallettransactions
 - [ ] sendfrom "fromaccount" "toKMDaddress" amount ( minconf "comment" "comment-to" )
 - [ ] sendmany "fromaccount" {"address":amount,...} ( minconf "comment" ["address",...] )
 - [ ] sendtoaddress "KMD_address" amount ( "comment" "comment-to" subtractfeefromamount )

@@ -2,6 +2,7 @@ use crate::error::Error;
 use jsonrpc;
 use std::collections::HashMap;
 use std::io::ErrorKind;
+use std::iter::FromIterator;
 use std::path::PathBuf;
 use std::{fs, io, result};
 
@@ -233,6 +234,9 @@ impl RpcApi for Client {
         args: &[serde_json::Value],
     ) -> Result<T> {
         let req = self.client.build_request(&cmd, &args);
+
+        dbg!(&req);
+
         let resp = self.client.send_request(&req).map_err(Error::from);
 
         // dbg!(&resp);
@@ -520,6 +524,34 @@ pub trait RpcApi: Sized {
 
     fn resend_wallet_transactions(&self) -> Result<Vec<bitcoin::Txid>> {
         self.call("resendwallettransactions", &[])
+    }
+
+    fn send_many(
+        &self,
+        amounts: &HashMap<Address, Amount>,
+        minconf: Option<u16>,
+        comment: Option<&str>,
+        subtract_fee_from_amount: Option<&Vec<Address>>,
+    ) -> Result<bitcoin::Txid> {
+        let amounts_converted = serde_json::Map::from_iter(
+            amounts
+                .iter()
+                .map(|(k, v)| (k.to_string().clone(), serde_json::Value::from(v.as_kmd()))),
+        );
+        let mut args = [
+            "".into(),
+            into_json(amounts_converted)?,
+            opt_into_json(minconf)?,
+            opt_into_json(comment)?,
+            opt_into_json(subtract_fee_from_amount)?,
+        ];
+        let defaults = [
+            into_json(1)?,
+            into_json("")?,
+            into_json(Vec::<Address>::new())?,
+        ];
+
+        self.call("sendmany", handle_defaults(&mut args, &defaults))
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

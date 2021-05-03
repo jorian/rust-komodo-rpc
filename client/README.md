@@ -39,8 +39,8 @@
 - [ ] ~~move "fromaccount" "toaccount" amount ( minconf "comment" )~~
 - [x] opreturn_burn burn_amount hexstring ( txfee )
 - [x] resendwallettransactions
-- [ ] sendfrom "fromaccount" "toKMDaddress" amount ( minconf "comment" "comment-to" )
-- [ ] sendmany "fromaccount" {"address":amount,...} ( minconf "comment" ["address",...] )
+- [ ] ~~sendfrom "fromaccount" "toKMDaddress" amount ( minconf "comment" "comment-to" )~~
+- [x] sendmany ~~"fromaccount"~~ {"address":amount,...} ( minconf "comment" ["address",...] )
 - [ ] sendtoaddress "KMD_address" amount ( "comment" "comment-to" subtractfeefromamount )
 - [x] ~~setaccount "KMD_address" "account"~~
 - [ ] setpubkey

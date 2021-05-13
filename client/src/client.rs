@@ -554,6 +554,32 @@ pub trait RpcApi: Sized {
         self.call("sendmany", handle_defaults(&mut args, &defaults))
     }
 
+    fn send_to_address(
+        &self,
+        address: &Address,
+        amount: &Amount,
+        minconf: Option<u32>,
+        comment: Option<&str>,
+        comment_to: Option<&str>,
+        subtract_fee_from_amount: Option<bool>,
+    ) -> Result<bitcoin::Txid> {
+        let mut args = [
+            into_json(address.to_string())?,
+            into_json(amount.as_kmd())?,
+            opt_into_json(minconf)?,
+            opt_into_json(comment)?,
+            opt_into_json(comment_to)?,
+            opt_into_json(subtract_fee_from_amount)?,
+        ];
+        let defaults = [
+            into_json(1)?,
+            into_json("")?,
+            into_json("")?,
+            into_json(false)?,
+        ];
+        self.call("sendtoaddress", handle_defaults(&mut args, &defaults))
+    }
+
     fn get_unconfirmed_balance(&self) -> Result<f64> {
         self.call("getunconfirmedbalance", &[])
     }

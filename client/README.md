@@ -41,7 +41,7 @@
 - [x] resendwallettransactions
 - [ ] ~~sendfrom "fromaccount" "toKMDaddress" amount ( minconf "comment" "comment-to" )~~
 - [x] sendmany ~~"fromaccount"~~ {"address":amount,...} ( minconf "comment" ["address",...] )
-- [ ] sendtoaddress "KMD_address" amount ( "comment" "comment-to" subtractfeefromamount )
+- [x] sendtoaddress "KMD_address" amount ( "comment" "comment-to" subtractfeefromamount )
 - [x] ~~setaccount "KMD_address" "account"~~
 - [ ] setpubkey
 - [ ] setstakingsplit

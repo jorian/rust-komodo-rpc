@@ -4,6 +4,33 @@
 
 - [x] getrawtransaction "txid" ( verbose )
 
+### Blockchain
+
+- [x] coinsupply <height>
+- [x] getbestblockhash
+- [x] getblock "hash|height" ( verbosity )
+- [x] getblockchaininfo
+- [x] getblockcount
+- [x] getblockhash index
+- [ ] getblockhashes timestamp
+- [x] getblockheader "hash" ( verbose )
+- [x] getchaintips
+- [x] getchaintxstats
+- [x] getdifficulty
+- [ ] getlastsegidstakes depth
+- [x] getmempoolinfo
+- [x] getrawmempool ( verbose )
+- [ ] getspentinfo
+- [ ] gettxout "txid" n ( includemempool )
+- [ ] gettxoutproof ["txid",...] ( blockhash )
+- [ ] gettxoutsetinfo
+- [ ] kvsearch key
+- [ ] kvupdate key "value" days passphrase
+- [ ] minerids needs height
+- [ ] notaries height timestamp
+- [ ] verifychain ( checklevel numblocks )
+- [ ] verifytxoutproof "proof"
+
 ### Wallet
 
 - [x] addmultisigaddress nrequired ["key",...] ( "account" )

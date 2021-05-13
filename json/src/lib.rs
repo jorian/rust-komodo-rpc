@@ -17,6 +17,8 @@ use komodo::{PrivateKey, PublicKey};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 // use bitcoin::hash_types::*;
 
+use std::collections::HashMap;
+
 #[derive(Clone, Debug)]
 pub enum PubkeyOrAddress<'a> {
     Address(&'a Address),
@@ -103,9 +105,9 @@ pub struct ValuePool {
     #[serde(rename = "chainValueZat")]
     pub chain_value_sat: u64,
     #[serde(rename = "valueDelta")]
-    pub value_delta: f64,
+    pub value_delta: Option<f64>,
     #[serde(rename = "valueDeltaZat")]
-    pub value_delta_sat: u64,
+    pub value_delta_sat: Option<u64>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -371,3 +373,126 @@ pub struct OpReturnBurnResult {
 //     pub address: Address,
 //     pub pubkey: PublicKey,
 // }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct BlockchainInfo {
+    // Can be one of main, test or regtest
+    pub chain: String,
+    pub blocks: u32,
+    pub synced: bool,
+    pub headers: u32,
+    pub bestblockhash: bitcoin::BlockHash,
+    pub difficulty: f64,
+    pub verificationprogress: f64,
+    pub chainwork: String,
+    pub commitments: u64,
+    #[serde(rename = "valuePools")]
+    pub value_pools: Vec<ValuePool>,
+    pub softforks: Vec<BlockchainInfoSoftfork>,
+    pub upgrades: Option<HashMap<String, BlockchainInfoUpgrade>>,
+    pub consensus: BlockchainInfoConsensus,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct BlockchainInfoConsensus {
+    pub chaintip: String,
+    pub nextblock: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct BlockchainInfoUpgrade {
+    pub name: String,
+    pub activationheight: u32,
+    pub status: String,
+    pub info: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct BlockchainInfoSoftfork {
+    pub id: String,
+    pub version: u32,
+    pub enforce: BlockchainInfoSoftforkProgress,
+    pub reject: BlockchainInfoSoftforkProgress,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct BlockchainInfoSoftforkProgress {
+    pub status: bool,
+    pub found: u32,
+    pub required: u32,
+    pub window: u32,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct BlockHeader {
+    pub hash: bitcoin::BlockHash,
+    pub confirmations: u32,
+    pub height: u32,
+    pub version: u32,
+    pub merkleroot: String,
+    pub time: u32,
+    pub nonce: String,
+    pub solution: String,
+    pub bits: String,
+    pub difficulty: f64,
+    pub chainwork: String,
+    pub segid: i32,
+    pub previousblockhash: Option<bitcoin::BlockHash>, // oldest block has no previous block
+    pub nextblockhash: Option<bitcoin::BlockHash>,     // newest block has no next block
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ChainTips(Vec<ChainTip>);
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ChainTip {
+    pub height: u64,
+    pub hash: String,
+    pub branchlen: u32,
+    pub status: ChainTipStatus,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ChainTipStatus {
+    Invalid,
+    #[serde(rename = "headers-only")]
+    HeadersOnly,
+    #[serde(rename = "valid-headers")]
+    ValidHeaders,
+    #[serde(rename = "valid-fork")]
+    ValidFork,
+    Active,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ChainTxStats {
+    pub time: u64,
+    pub txcount: u64,
+    pub window_final_block_hash: bitcoin::BlockHash,
+    pub window_block_count: u32,
+    pub window_tx_count: u64,
+    pub window_interval: u64,
+    pub txrate: f64,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MempoolInfo {
+    pub size: u32,
+    pub bytes: u32,
+    pub usage: u32,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RawMempool(HashMap<String, RawMempoolTransactionInfo>);
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RawMempoolTransactionInfo {
+    pub size: u32,
+    pub fee: f32,
+    pub time: u32,
+    pub height: u32,
+    pub startingpriority: f64,
+    pub currentpriority: f64,
+    pub depends: Vec<String>, // this either returns an empty array or an array with txids
+}

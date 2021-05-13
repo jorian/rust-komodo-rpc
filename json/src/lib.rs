@@ -364,3 +364,10 @@ pub struct GetRawTransactionResult(String);
 pub struct OpReturnBurnResult {
     hex: String,
 }
+
+// #[derive(Clone, Debug, Deserialize, Serialize)]
+// pub struct SetPubkeyResult {
+//     pub ismine: String,
+//     pub address: Address,
+//     pub pubkey: PublicKey,
+// }

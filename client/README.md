@@ -43,10 +43,10 @@
 - [x] sendmany ~~"fromaccount"~~ {"address":amount,...} ( minconf "comment" ["address",...] )
 - [x] sendtoaddress "KMD_address" amount ( "comment" "comment-to" subtractfeefromamount )
 - [x] ~~setaccount "KMD_address" "account"~~
-- [ ] setpubkey
+- [ ] ~~setpubkey~~ invalid response
 - [ ] setstakingsplit
 - [x] settxfee amount
-- [ ] signmessage "t-addr" "message"
+- [x] signmessage "t-addr" "message"
 - [ ] walletlock
 - [ ] walletpassphrase "passphrase" timeout
 - [ ] walletpassphrasechange "oldpassphrase" "newpassphrase"

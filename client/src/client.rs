@@ -239,7 +239,7 @@ impl RpcApi for Client {
 
         let resp = self.client.send_request(&req).map_err(Error::from);
 
-        // dbg!(&resp);
+        dbg!(&resp);
 
         Ok(resp?.into_result()?)
     }
@@ -578,6 +578,14 @@ pub trait RpcApi: Sized {
             into_json(false)?,
         ];
         self.call("sendtoaddress", handle_defaults(&mut args, &defaults))
+    }
+
+    // fn set_pubkey(&self, pubkey: &komodo::PublicKey) -> Result<SetPubkeyResult> {
+    //     self.call("setpubkey", &[into_json(pubkey.to_string())?])
+    // }
+
+    fn sign_message(&self, address: &Address, message: &str) -> Result<String> {
+        self.call("signmessage", &[address.to_string().into(), message.into()])
     }
 
     fn get_unconfirmed_balance(&self) -> Result<f64> {

@@ -2,8 +2,6 @@
 
 - Accounts are not supported in Komodo and will not be implemented here.
 
-- [x] getrawtransaction "txid" ( verbose )
-
 ### Blockchain
 
 - [x] coinsupply <height>
@@ -30,6 +28,61 @@
 - [x] notaries height timestamp
 - [x] verifychain ( checklevel numblocks )
 - [x] verifytxoutproof "proof"
+
+### Mining
+
+- [ ] generate numblocks
+- [ ] getgenerate
+- [ ] setgenerate generate ( genproclimit )
+- [ ] genminingCSV
+- [ ] getblocksubsidy height
+- [ ] getblocktemplate ( "jsonrequestobject" )
+- [ ] getlocalsolps
+- [ ] getmininginfo
+- [ ] getnetworkhashps ( blocks height )
+- [ ] getnetworksolps ( blocks height )
+- [ ] prioritisetransaction <txid> <priority delta> <fee delta>
+- [ ] submitblock "hexdata" ( "jsonparametersobject" )
+
+### Network
+
+- [ ] addnode "node" "add|remove|onetry"
+- [ ] clearbanned
+- [ ] disconnectnode "node"
+- [ ] getaddednodeinfo dns ( "node" )
+- [ ] getconnectioncount
+- [ ] getdeprecationinfo
+- [ ] getnettotals
+- [ ] getnetworkinfo
+- [ ] getpeerinfo
+- [ ] listbanned
+- [ ] ping
+- [ ] setban "ip(/netmask)" "add|remove" (bantime) (absolute)
+
+### Transaction
+
+- [ ] createrawtransaction [{"txid":"id","vout":n},...] {"address":amount,...} ( locktime ) ( expiryheight )
+- [ ] decoderawtransaction "hexstring"
+- [ ] decodescript "hex"
+- [ ] fundrawtransaction "hexstring"
+- [x] getrawtransaction "txid" ( verbose )
+- [ ] sendrawtransaction "hexstring" ( allowhighfees )
+- [ ] signrawtransaction "hexstring" ( [{"txid":"id","vout":n,"scriptPubKey":"hex","redeemScript":"hex"},...] ["privatekey1",...] sighashtype )
+
+- [ ] createmultisig nrequired ["key",...]
+- [ ] decodeccopret scriptPubKey
+- [ ] estimatefee nblocks
+- [ ] estimatepriority nblocks
+- [ ] invalidateblock "hash"
+- [ ] jumblr_deposit "depositaddress"
+- [ ] jumblr_pause
+- [ ] jumblr_resume
+- [ ] jumblr_secret "secretaddress"
+- [ ] reconsiderblock "hash"
+- [ ] txnotarizedconfirmed txid
+- [ ] validateaddress "komodoaddress"
+- [ ] verifymessage "komodoaddress" "signature" "message"
+- [ ] z_validateaddress "zaddr"
 
 ### Wallet
 

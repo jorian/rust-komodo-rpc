@@ -258,34 +258,34 @@ pub trait RpcApi: Sized {
         args: &[serde_json::Value],
     ) -> Result<T>;
 
-    fn coinsupply(&self, height: &str) -> Result<CoinSupply> {
+    fn coin_supply(&self, height: &str) -> Result<CoinSupply> {
         // TODO why is height a str?
         self.call("coinsupply", &[height.into()])
     }
-    fn getbestblockhash(&self) -> Result<bitcoin::BlockHash> {
+    fn get_best_blockhash(&self) -> Result<bitcoin::BlockHash> {
         self.call("getbestblockhash", &[])
     }
 
-    fn getblockchaininfo(&self) -> Result<BlockchainInfo> {
+    fn get_blockchain_info(&self) -> Result<BlockchainInfo> {
         self.call("getblockchaininfo", &[])
     }
-    fn getblockcount(&self) -> Result<u32> {
+    fn get_block_count(&self) -> Result<u32> {
         self.call("getblockcount", &[])
     }
 
-    fn getblockhashes(&self) -> Result<()> {
+    fn get_blockhashes(&self) -> Result<()> {
         unimplemented!()
     }
-    fn getblockheader_verbose(&self, hash: &bitcoin::BlockHash) -> Result<BlockHeader> {
+    fn get_blockheader_verbose(&self, hash: &bitcoin::BlockHash) -> Result<BlockHeader> {
         self.call("getblockheader", &[into_json(hash)?, into_json(true)?])
     }
-    fn getblockheader(&self, hash: &bitcoin::BlockHash) -> Result<String> {
+    fn get_blockheader(&self, hash: &bitcoin::BlockHash) -> Result<String> {
         self.call("getblockheader", &[into_json(hash)?, into_json(false)?])
     }
-    fn getchaintips(&self) -> Result<ChainTips> {
+    fn get_chaintips(&self) -> Result<ChainTips> {
         self.call("getchaintips", &[])
     }
-    fn getchaintxstats(
+    fn get_chain_tx_stats(
         &self,
         n: Option<u32>,
         blockhash: Option<bitcoin::BlockHash>,
@@ -295,34 +295,63 @@ pub trait RpcApi: Sized {
         let defaults = [null(), null()];
         self.call("getchaintxstats", handle_defaults(&mut args, &defaults))
     }
-    fn getdifficulty(&self) -> Result<f64> {
+    fn get_difficulty(&self) -> Result<f64> {
         self.call("getdifficulty", &[])
     }
-    fn getlastsegidstakes(&self) -> Result<()> {
+    fn get_last_segid_stakes(&self) -> Result<()> {
         unimplemented!()
     }
-    fn getmempoolinfo(&self) -> Result<MempoolInfo> {
+    fn get_mempool_info(&self) -> Result<MempoolInfo> {
         self.call("getmempoolinfo", &[])
     }
-    fn getrawmempool(&self) -> Result<Vec<bitcoin::Txid>> {
+    fn get_raw_mempool(&self) -> Result<Vec<bitcoin::Txid>> {
         self.call("getrawmempool", &[])
     }
 
-    fn getrawmempool_verbose(&self) -> Result<RawMempool> {
+    fn get_raw_mempool_verbose(&self) -> Result<RawMempool> {
         self.call("getrawmempool", &[into_json(true)?])
     }
 
-    fn getspentinfo(&self) -> Result<()> {
+    fn get_spent_info(&self, txid: bitcoin::Txid, index: u32) -> Result<SpentInfoResult> {
+        // let mut hashmap: HashMap<String, String> = HashMap::new();
+        // hashmap.insert(String::from("txid"), txid.to_string());
+        // hashmap.insert(String::from("index"), index.to_string());
+
+        // let args = [into_json(hashmap)?];
+
+        // self.call("getspentinfo", &args)
+
+        // TODO the getspentinfo call does not work
+
         unimplemented!()
     }
-    fn gettxout(&self) -> Result<()> {
-        unimplemented!()
+    fn get_txout(
+        &self,
+        txid: bitcoin::Txid,
+        n_vout: u32,
+        include_mempool: Option<bool>,
+    ) -> Result<TxOutResult> {
+        let mut args = [
+            into_json(txid.to_string())?,
+            into_json(n_vout)?,
+            opt_into_json(include_mempool)?,
+        ];
+
+        let defaults = [into_json(false)?];
+
+        self.call("gettxout", handle_defaults(&mut args, &defaults))
     }
-    fn gettxoutproof(&self) -> Result<()> {
-        unimplemented!()
+    fn get_txout_proof(
+        &self,
+        txids: Vec<bitcoin::Txid>,
+        blockhash: Option<bitcoin::BlockHash>,
+    ) -> Result<String> {
+        let mut args = [into_json(txids)?, opt_into_json(blockhash)?];
+
+        self.call("gettxoutproof", handle_defaults(&mut args, &[null()]))
     }
-    fn gettxoutsetinfo(&self) -> Result<()> {
-        unimplemented!()
+    fn get_txout_set_info(&self) -> Result<TxOutSetInfoResult> {
+        self.call("gettxoutsetinfo", &[])
     }
     fn kvsearch(&self) -> Result<()> {
         unimplemented!()
@@ -330,17 +359,21 @@ pub trait RpcApi: Sized {
     fn kvupdate(&self) -> Result<()> {
         unimplemented!()
     }
-    fn minerids(&self) -> Result<()> {
-        unimplemented!()
+    fn miner_ids(&self, height: u64) -> Result<MinerIds> {
+        self.call("minerids", &[into_json(height.to_string())?])
     }
-    fn notaries(&self) -> Result<()> {
-        unimplemented!()
+    fn notaries(&self, height: u64) -> Result<Notaries> {
+        self.call("notaries", &[into_json(height.to_string())?])
     }
-    fn verifychain(&self) -> Result<()> {
-        unimplemented!()
+    fn verify_chain(&self, checklevel: Option<u8>, numblocks: Option<u32>) -> Result<bool> {
+        let mut args = [opt_into_json(checklevel)?, opt_into_json(numblocks)?];
+
+        let defaults = [into_json(3)?, into_json(288)?];
+
+        self.call("verifychain", handle_defaults(&mut args, &defaults))
     }
-    fn verifytxoutproof(&self) -> Result<()> {
-        unimplemented!()
+    fn verify_txout_proof(&self, proof: &str) -> Result<Vec<Option<bitcoin::Txid>>> {
+        self.call("verifytxoutproof", &[into_json(proof)?])
     }
 
     fn get_raw_transaction_verbose(

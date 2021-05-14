@@ -496,3 +496,75 @@ pub struct RawMempoolTransactionInfo {
     pub currentpriority: f64,
     pub depends: Vec<String>, // this either returns an empty array or an array with txids
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SpentInfoResult {
+    pub txid: bitcoin::Txid,
+    pub index: u32,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TxOutResult {
+    pub bestblock: BlockHash,
+    pub confirmations: u32,
+    pub rawconfirmations: u32,
+    pub value: f64,
+    #[serde(rename = "scriptPubKey")]
+    pub script_pubkey: ScriptPubKey,
+    pub version: u32,
+    pub coinbase: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ScriptPubKey {
+    pub asm: String,
+    pub hex: String,
+    #[serde(rename = "reqSigs")]
+    pub req_sigs: u32,
+    #[serde(rename = "type")]
+    pub script_type: String,
+    pub addresses: Vec<Address>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TxOutSetInfoResult {
+    pub height: u32,
+    pub bestblock: bitcoin::BlockHash,
+    pub transactions: u64,
+    pub txouts: u32,
+    pub bytes_serialized: u64,
+    pub hash_serialized: String,
+    pub total_amount: f64,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MinerIds {
+    pub mined: Vec<MinerId>,
+    pub numnotaries: u8,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MinerId {
+    pub notaryid: Option<u8>,
+    #[serde(rename = "KMDaddress")]
+    pub kmd_address: Option<Address>,
+    pub pubkey: String, // response could contain `external miners` instead of miner pubkey
+    pub blocks: u32,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Notaries {
+    pub notaries: Vec<Notary>,
+    pub numnotaries: u8,
+    pub height: u32,
+    pub timestamp: u64,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Notary {
+    pub pubkey: bitcoin::PublicKey,
+    #[serde(rename = "BTCaddress")]
+    pub btc_address: bitcoin::Address,
+    #[serde(rename = "KMDaddress")]
+    pub kmd_address: Address,
+}

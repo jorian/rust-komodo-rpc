@@ -21,15 +21,15 @@
 - [x] getmempoolinfo
 - [x] getrawmempool ( verbose )
 - [ ] getspentinfo
-- [ ] gettxout "txid" n ( includemempool )
-- [ ] gettxoutproof ["txid",...] ( blockhash )
-- [ ] gettxoutsetinfo
-- [ ] kvsearch key
-- [ ] kvupdate key "value" days passphrase
-- [ ] minerids needs height
-- [ ] notaries height timestamp
-- [ ] verifychain ( checklevel numblocks )
-- [ ] verifytxoutproof "proof"
+- [x] gettxout "txid" n ( includemempool )
+- [x] gettxoutproof ["txid",...] ( blockhash )
+- [x] gettxoutsetinfo
+- [ ] ~~kvsearch key~~
+- [ ] ~~kvupdate key "value" days passphrase~~
+- [x] minerids height
+- [x] notaries height timestamp
+- [x] verifychain ( checklevel numblocks )
+- [x] verifytxoutproof "proof"
 
 ### Wallet
 

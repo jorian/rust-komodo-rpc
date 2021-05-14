@@ -266,11 +266,33 @@ pub trait RpcApi: Sized {
         self.call("getbestblockhash", &[])
     }
 
+    /// Get a block, based on its hash (later on: and height todo).
+    fn get_block(&self, hash: &bitcoin::BlockHash) -> Result<json::Block> {
+        let val = serde_json::to_value(hash)?;
+
+        self.call("getblock", &[val])
+        // the BTC rpc library explicitly validates the bytes that are returned from the daemon.
+
+        // let hex: String = self.call("getblock", &[val])?;
+        // let bytes: Vec<u8> = FromHex::from_hex(&hex)?;
+        // let deserialized = bitcoin::consensus::encode::deserialize(&bytes)?;
+        //
+        // Ok(deserialized)
+        // fetch the hex
+        // make it a Vec<u8>
+        // that data needs to be consensus deserialized, to make sure it is a valid hash.
+        // into_json()
+    }
+
     fn get_blockchain_info(&self) -> Result<BlockchainInfo> {
         self.call("getblockchaininfo", &[])
     }
     fn get_block_count(&self) -> Result<u32> {
         self.call("getblockcount", &[])
+    }
+
+    fn get_block_hash(&self, height: u64) -> Result<bitcoin::BlockHash> {
+        self.call("getblockhash", &[height.into()])
     }
 
     fn get_blockhashes(&self) -> Result<()> {
@@ -385,33 +407,6 @@ pub trait RpcApi: Sized {
 
     fn get_raw_transaction(&self, txid: &bitcoin::Txid) -> Result<json::GetRawTransactionResult> {
         self.call("getrawtransaction", &[into_json(txid)?, 0.into()])
-    }
-
-    /// Get block hash at a given height
-    fn get_block_hash(&self, height: u64) -> Result<bitcoin::BlockHash> {
-        self.call("getblockhash", &[height.into()])
-    }
-
-    fn get_coin_supply(&self, height: &str) -> Result<json::CoinSupply> {
-        self.call("coinsupply", &[height.into()])
-    }
-
-    /// Get a block, based on its hash (later on: and height todo).
-    fn get_block(&self, hash: &bitcoin::BlockHash) -> Result<json::Block> {
-        let val = serde_json::to_value(hash)?;
-
-        Ok(self.call("getblock", &[val])?)
-        // the BTC rpc library explicitly validates the bytes that are returned from the daemon.
-
-        // let hex: String = self.call("getblock", &[val])?;
-        // let bytes: Vec<u8> = FromHex::from_hex(&hex)?;
-        // let deserialized = bitcoin::consensus::encode::deserialize(&bytes)?;
-        //
-        // Ok(deserialized)
-        // fetch the hex
-        // make it a Vec<u8>
-        // that data needs to be consensus deserialized, to make sure it is a valid hash.
-        // into_json()
     }
 
     fn ping(&self) -> Result<()> {

@@ -398,6 +398,49 @@ pub trait RpcApi: Sized {
         self.call("verifytxoutproof", &[into_json(proof)?])
     }
 
+    fn createrawtransaction(
+        &self,
+        inputs: &[json::CreateRawTransactionInput],
+        outputs: &HashMap<String, Amount>,
+        locktime: Option<i64>,
+        expiryheight: Option<u64>,
+    ) -> Result<String> {
+        let outputs_converted = serde_json::Map::from_iter(
+            outputs
+                .iter()
+                .map(|(k, v)| (k.clone(), serde_json::Value::from(v.as_kmd()))),
+        );
+        let mut args = [
+            into_json(inputs)?,
+            into_json(outputs_converted)?,
+            opt_into_json(locktime)?,
+            opt_into_json(expiryheight)?,
+        ];
+        let defaults = [into_json(0i64)?, null()];
+        self.call(
+            "createrawtransaction",
+            handle_defaults(&mut args, &defaults),
+        )
+    }
+    fn decoderawtransaction(&self) -> Result<()> {
+        unimplemented!()
+    }
+    fn decodescript(&self) -> Result<()> {
+        unimplemented!()
+    }
+    fn fundrawtransaction(&self) -> Result<()> {
+        unimplemented!()
+    }
+    fn getrawtransaction(&self) -> Result<()> {
+        unimplemented!()
+    }
+    fn sendrawtransaction(&self) -> Result<()> {
+        unimplemented!()
+    }
+    fn signrawtransaction(&self) -> Result<()> {
+        unimplemented!()
+    }
+
     fn get_raw_transaction_verbose(
         &self,
         txid: &bitcoin::Txid,
@@ -711,6 +754,14 @@ pub trait RpcApi: Sized {
 
     fn set_tx_fee(&self, amount: f64) -> Result<bool> {
         self.call("settxfee", &[amount.into()])
+    }
+
+    fn get_snapshot(&self, top: Option<String>) -> Result<Snapshot> {
+        let mut args = [opt_into_json(top)?];
+        self.call(
+            "getsnapshot",
+            handle_defaults(&mut args, &[null()])
+        )
     }
 }
 

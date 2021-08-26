@@ -1,5 +1,5 @@
-use komodo_rpc_json::bitcoin::hashes::core::fmt::Formatter;
 use komodo_rpc_json::komodo;
+use std::fmt::Formatter;
 use std::num::ParseIntError;
 use std::{error, fmt, io};
 // use komodo_rpc_json::komodo::util::amount::ParseAmountError;

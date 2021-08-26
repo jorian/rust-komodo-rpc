@@ -9,12 +9,14 @@ pub extern crate komodo;
 extern crate serde;
 extern crate serde_json;
 
+use std::fmt::Display;
+use std::str::FromStr;
 use crate::komodo::SignedAmount;
 use bitcoin::{BlockHash, PubkeyHash, Script, ScriptHash, Txid};
 use komodo::util::amount::Amount;
 pub use komodo::Address;
 use komodo::{PrivateKey, PublicKey};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::*;
 // use bitcoin::hash_types::*;
 
 use std::collections::HashMap;
@@ -567,4 +569,47 @@ pub struct Notary {
     pub btc_address: bitcoin::Address,
     #[serde(rename = "KMDaddress")]
     pub kmd_address: Address,
+}
+
+// Used for createrawtransaction argument.
+#[derive(Serialize, Clone, PartialEq, Eq, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateRawTransactionInput {
+    pub txid: bitcoin::Txid,
+    pub vout: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sequence: Option<u32>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Snapshot {
+    pub start_time: u64,
+    pub addresses: Vec<SnapshotAddress>,
+    pub total: f64,
+    pub average: f64,
+    pub utxos: u64,
+    pub total_addresses: u64,
+    pub ending_height: u64,
+    pub end_time: u64,
+    pub ignored_addresses: u32,
+    pub skipped_cc_utxos: u32,
+    pub cc_utxo_value: u32,
+    #[serde(rename = "total_includeCCvouts")]
+    pub total_include_ccvouts: f64,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SnapshotAddress {
+    pub addr: String,
+    #[serde(deserialize_with = "from_str")]
+    pub amount: f64
+}
+
+fn from_str<'de, T, D>(deserializer: D) -> Result<T, D::Error>
+    where T: FromStr,
+          T::Err: Display,
+          D: Deserializer<'de>
+{
+    let s = String::deserialize(deserializer)?;
+    T::from_str(&s).map_err(de::Error::custom)
 }

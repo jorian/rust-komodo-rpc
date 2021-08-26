@@ -4,6 +4,8 @@
 
 ### Blockchain
 
+- [x] getsnapshot ( "top" )
+
 - [x] coinsupply <height>
 - [x] getbestblockhash
 - [x] getblock "hash|height" ( verbosity )

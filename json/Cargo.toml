@@ -1,6 +1,6 @@
 [package]
 name = "komodo-rpc-json"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["jorian"]
 edition = "2018"
 

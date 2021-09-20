@@ -9,15 +9,14 @@ pub extern crate komodo;
 extern crate serde;
 extern crate serde_json;
 
-use std::fmt::Display;
-use std::str::FromStr;
 use crate::komodo::SignedAmount;
 use bitcoin::{BlockHash, PubkeyHash, Script, ScriptHash, Txid};
 use komodo::util::amount::Amount;
 pub use komodo::Address;
 use komodo::{PrivateKey, PublicKey};
 use serde::*;
-// use bitcoin::hash_types::*;
+use std::fmt::Display;
+use std::str::FromStr;
 
 use std::collections::HashMap;
 
@@ -593,7 +592,7 @@ pub struct Snapshot {
     pub end_time: u64,
     pub ignored_addresses: u32,
     pub skipped_cc_utxos: u32,
-    pub cc_utxo_value: u32,
+    pub cc_utxo_value: f64,
     #[serde(rename = "total_includeCCvouts")]
     pub total_include_ccvouts: f64,
 }
@@ -602,13 +601,14 @@ pub struct Snapshot {
 pub struct SnapshotAddress {
     pub addr: String,
     #[serde(deserialize_with = "from_str")]
-    pub amount: f64
+    pub amount: f64,
 }
 
 fn from_str<'de, T, D>(deserializer: D) -> Result<T, D::Error>
-    where T: FromStr,
-          T::Err: Display,
-          D: Deserializer<'de>
+where
+    T: FromStr,
+    T::Err: Display,
+    D: Deserializer<'de>,
 {
     let s = String::deserialize(deserializer)?;
     T::from_str(&s).map_err(de::Error::custom)

@@ -235,11 +235,11 @@ impl RpcApi for Client {
     ) -> Result<T> {
         let req = self.client.build_request(&cmd, &args);
 
-        dbg!(&req);
+        // dbg!(&req);
 
         let resp = self.client.send_request(&req).map_err(Error::from);
 
-        dbg!(&resp);
+        // dbg!(&resp);
 
         Ok(resp?.into_result()?)
     }

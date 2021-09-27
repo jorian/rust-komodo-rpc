@@ -758,10 +758,7 @@ pub trait RpcApi: Sized {
 
     fn get_snapshot(&self, top: Option<String>) -> Result<Snapshot> {
         let mut args = [opt_into_json(top)?];
-        self.call(
-            "getsnapshot",
-            handle_defaults(&mut args, &[null()])
-        )
+        self.call("getsnapshot", handle_defaults(&mut args, &[null()]))
     }
 }
 

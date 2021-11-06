@@ -623,8 +623,8 @@ pub struct TokenInfo {
     pub name: String,
     pub supply: u32,
     pub description: String,
-    #[serde(deserialize_with = "from_data_field")]
-    pub data: TokelData,
+    #[serde(default, deserialize_with = "callback_opt")]
+    pub data: Option<TokelData>,
     pub version: u32,
     #[serde(rename = "IsMixed")]
     pub is_mixed: String,
@@ -692,19 +692,29 @@ impl TokelData {
 
         let token_arbitrary_data_field: Option<String>;
 
+        // 04
+        // 05
+        // 02 02 ab cd ef
         if let Some(pos) = decoded.iter().position(|x| *x == 4) {
             let length = *decoded.get(pos + 1).unwrap();
             dbg!(length);
             if length > 0 {
                 let arbitrary_data_bytes = &decoded[pos + 2..=pos + length as usize + 1];
-                token_arbitrary_data_field =
-                    Some(String::from(str::from_utf8(arbitrary_data_bytes).unwrap()));
+                dbg!(&arbitrary_data_bytes);
+
+                if let Ok(valid_string) = str::from_utf8(arbitrary_data_bytes) {
+                    token_arbitrary_data_field = Some(String::from(valid_string))
+                } else {
+                    // todo try to parse this into serde::value if it's JSON
+                    // todo what if the arbitrary data field is not utf8?
+                    token_arbitrary_data_field = None
+                }
                 dbg!(&token_arbitrary_data_field);
             } else {
                 token_arbitrary_data_field = None;
             }
         } else {
-            panic!("code field arbitrary missing");
+            token_arbitrary_data_field = None;
         }
 
         TokelData {
@@ -724,10 +734,38 @@ pub fn decode_hex(s: &str) -> Result<Vec<u8>, ParseIntError> {
         .collect()
 }
 
-pub fn from_data_field<'de, D>(deserializer: D) -> Result<TokelData, D::Error>
+pub fn callback<'de, D>(deserializer: D) -> Result<TokelData, D::Error>
 where
     D: Deserializer<'de>,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
     Ok(TokelData::from_data_string(&s))
+}
+
+#[derive(Debug, Deserialize)]
+struct WrappedTokelData(#[serde(deserialize_with = "callback")] TokelData);
+
+pub fn callback_opt<'de, D>(deserializer: D) -> Result<Option<TokelData>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    Option::<WrappedTokelData>::deserialize(deserializer).map(
+        |opt_wrapped: Option<WrappedTokelData>| {
+            opt_wrapped.map(|wrapped: WrappedTokelData| wrapped.0)
+        },
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::TokelData;
+    #[test]
+    fn non_utf8_arbitrary_data() {
+        let tokel_data = TokelData::from_data_string(
+            "f70101fe65530600021068747470733a2f2f736974652e6f7267030104050202abcdef",
+        );
+        assert_eq!(tokel_data.token_id, 254);
+        assert_eq!(tokel_data.token_url, "https://si");
+        assert!(tokel_data.token_arbitrary_data_field.is_none());
+    }
 }

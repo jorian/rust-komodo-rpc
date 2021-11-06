@@ -760,6 +760,12 @@ pub trait RpcApi: Sized {
         let mut args = [opt_into_json(top)?];
         self.call("getsnapshot", handle_defaults(&mut args, &[null()]))
     }
+
+    // TOKENS
+
+    fn tokenv2info(&self, token_id: &str) -> Result<TokenInfo> {
+        self.call("tokenv2info", &[token_id.into()])
+    }
 }
 
 #[cfg(test)]

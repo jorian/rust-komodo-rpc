@@ -297,11 +297,12 @@ pub struct GetRawTransactionResultVerbose {
     pub vin: Vec<GetRawTransactionVin>,
     pub vout: Vec<GetRawTransactionVout>,
     pub vjoinsplit: Vec<GetRawTransactionVJoinSplit>,
-    pub blockhash: bitcoin::BlockHash,
-    pub confirmations: u32,
-    pub rawconfirmations: u32,
-    pub time: u64,
-    pub blocktime: u64,
+    pub blockhash: Option<bitcoin::BlockHash>, // transaction might not be in a block yet
+    pub height: Option<u32>,
+    pub confirmations: Option<u32>,
+    pub rawconfirmations: Option<u32>,
+    pub time: Option<u64>,
+    pub blocktime: Option<u64>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -323,8 +324,8 @@ pub struct GetRawTransactionVinScriptSig {
 pub struct GetRawTransactionVout {
     #[serde(with = "komodo::util::amount::serde::as_kmd")]
     pub value: Amount,
-    #[serde(with = "komodo::util::amount::serde::as_kmd::opt")]
-    pub interest: Option<Amount>,
+    // #[serde(with = "komodo::util::amount::serde::as_kmd::opt")]
+    // pub interest: Option<Amount>,
     pub n: u32,
     #[serde(rename = "scriptPubKey")]
     pub script_pubkey: GetRawTransactionVoutScriptPubKey,
@@ -612,4 +613,121 @@ where
 {
     let s = String::deserialize(deserializer)?;
     T::from_str(&s).map_err(de::Error::custom)
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct TokenInfo {
+    pub result: String,
+    pub tokenid: String,
+    pub owner: String,
+    pub name: String,
+    pub supply: u32,
+    pub description: String,
+    #[serde(deserialize_with = "from_data_field")]
+    pub data: TokelData,
+    pub version: u32,
+    #[serde(rename = "IsMixed")]
+    pub is_mixed: String,
+    pub height: u32,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct TokelData {
+    pub token_standard_version: u8,
+    pub token_id: u8,
+    pub token_url: String,
+    pub token_royalty_percentage: f32,
+    pub token_arbitrary_data_field: Option<String>, // todo this can be its own type and see if it's JSON or other structures.
+}
+
+use std::str;
+use std::{fmt::Write, num::ParseIntError};
+
+impl TokelData {
+    pub fn from_data_string(data: &str) -> Self {
+        let evalcode = &data[0..2];
+        let evalversion = &data[2..4];
+
+        if evalcode != "f7" {
+            panic!("you are not using the correct eval code");
+        }
+
+        if evalversion != "01" {
+            panic!("this version is not supported");
+        }
+
+        let rest = &data[4..];
+
+        let decoded = decode_hex(rest).unwrap();
+        let token_id: u8;
+
+        if let Some(pos) = decoded.iter().position(|x| *x == 1) {
+            token_id = *decoded.get(pos + 1).unwrap();
+            dbg!(token_id);
+        } else {
+            panic!("code field id missing");
+        }
+
+        let token_url: &str;
+
+        if let Some(pos) = decoded.iter().position(|x| *x == 2) {
+            let length = *decoded.get(pos + 1).unwrap();
+            dbg!(length);
+            let url_bytes = &decoded[pos + 2..=length as usize + 1];
+            token_url = str::from_utf8(url_bytes).unwrap();
+            dbg!(token_url);
+        } else {
+            panic!("code field url missing");
+        }
+
+        let token_royalty_percentage: f32;
+
+        if let Some(pos) = decoded.iter().position(|x| *x == 3) {
+            let royalty = *decoded.get(pos + 1).unwrap();
+            token_royalty_percentage = royalty as f32 / 1000.0;
+            dbg!(token_royalty_percentage);
+        } else {
+            panic!("code field royalty_percentage missing");
+        }
+
+        let token_arbitrary_data_field: Option<String>;
+
+        if let Some(pos) = decoded.iter().position(|x| *x == 4) {
+            let length = *decoded.get(pos + 1).unwrap();
+            dbg!(length);
+            if length > 0 {
+                let arbitrary_data_bytes = &decoded[pos + 2..=pos + length as usize + 1];
+                token_arbitrary_data_field =
+                    Some(String::from(str::from_utf8(arbitrary_data_bytes).unwrap()));
+                dbg!(&token_arbitrary_data_field);
+            } else {
+                token_arbitrary_data_field = None;
+            }
+        } else {
+            panic!("code field arbitrary missing");
+        }
+
+        TokelData {
+            token_standard_version: str::parse(evalversion).unwrap(),
+            token_id,
+            token_url: String::from(token_url),
+            token_royalty_percentage,
+            token_arbitrary_data_field,
+        }
+    }
+}
+
+pub fn decode_hex(s: &str) -> Result<Vec<u8>, ParseIntError> {
+    (0..s.len())
+        .step_by(2)
+        .map(|i| u8::from_str_radix(&s[i..i + 2], 16))
+        .collect()
+}
+
+pub fn from_data_field<'de, D>(deserializer: D) -> Result<TokelData, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(deserializer)?;
+    Ok(TokelData::from_data_string(&s))
 }
